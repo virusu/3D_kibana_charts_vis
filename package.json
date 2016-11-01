@@ -1,0 +1,10 @@
+{
+	"name": "vr_charts",
+	"version": "5.1.0",
+	"authors": [
+  		"Viorel Rusu"
+  	],
+  	"dependencies" : {
+    	"c3": "0.4.11"
+  	}
+}
