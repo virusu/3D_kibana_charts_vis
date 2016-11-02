@@ -6,9 +6,9 @@ import errors from 'ui/errors';
 // didn't already
 const module = uiModules.get('kibana/c3_vis', ['kibana']);
 
-const THREE = require("three");
+THREE = require("three");
 
-/*
+
   require('plugins/vr_charts/scm-commits.json');
 
 	require("plugins/vr_charts/FontUtils");
@@ -39,16 +39,16 @@ const THREE = require("three");
   var typeface = require('three.regular.helvetiker');
   THREE.typeface_js.loadFace(typeface);
   var typeface2 = require('plugins/vr_charts/helvetiker_bold.typeface');
-  THREE.typeface_js.loadFace(typeface2);*/
+  THREE.typeface_js.loadFace(typeface2);
 
-module.controller('KbnC3VisController', function($scope, $element, Private){
+module.controller('KbnVRVisController', function($scope, $element, Private){
 
 
 
 //////////
 // MAIN //
 //////////
-/*
+
 // standard global variables
 var container, scene, camera, renderer, controls, stats;
 
@@ -235,10 +235,10 @@ function update()
 {
   THREEDC.controls.update();
   stats.update();
-}*/
+}
 
 
-var camera, scene, renderer;
+/*var camera, scene, renderer;
 var geometry, material, mesh;
 
 init();
@@ -283,7 +283,7 @@ function animate() {
 
     renderer.render(scene, camera);
 
-}
+}*/
 
 
 /*	var idchart = $element.children().find(".chartc3");

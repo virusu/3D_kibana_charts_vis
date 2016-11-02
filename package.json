@@ -5,6 +5,9 @@
   		"Viorel Rusu"
   	],
   	"dependencies" : {
-    	"c3": "0.4.11"
+    	"c3": "0.4.11",
+    	"three": "^0.77.0",
+    	"three.regular.helvetiker": "^1.0.0"
+
   	}
 }
