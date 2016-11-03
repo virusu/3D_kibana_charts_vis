@@ -4,7 +4,7 @@ import errors from 'ui/errors';
 
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
 // didn't already
-const module = uiModules.get('kibana/c3_vis', ['kibana']);
+const module = uiModules.get('kibana/vr_vis', ['kibana']);
 
 THREE = require("three");
 
@@ -76,7 +76,7 @@ function init () {
 
 
 
-   var idchart = $element.children().find(".chartc3");
+   var idchart = $element.children().find(".chartvr");
    ///////////
    // SCENE //
    ///////////
@@ -86,8 +86,8 @@ function init () {
    // CAMERA //
    ////////////
    // set the view size in pixels (custom or according to window size)
-   var SCREEN_WIDTH = window.innerWidth;
-   var SCREEN_HEIGHT = window.innerHeight;
+   var SCREEN_WIDTH = 600;
+   var SCREEN_HEIGHT = 800;
    // camera attributes
    var VIEW_ANGLE = 45;
    var ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT;
@@ -163,52 +163,13 @@ function init () {
 
   THREEDC.initializer(camera,scene,renderer, idchart[0]);
 
-  var panel2=THREEDC.addPanel([0,0,0],4);
 
-  var bars =  THREEDC.barsChart(panel2);
-  bars
-  	  //.dimension(dimByMonth)
-  	  //.group(groupByMonth)
-      .width(200)
-      .height(200)
-      .data(data1)
-      .numberOfXLabels(7)
-      .gridsOn()
-      .numberOfYLabels(4)
-      .color(0xff8000);
-
-    var line =  THREEDC.pieChart(panel2);
+    var line =  THREEDC.pieChart();
        line
   	//  .dimension(dimByOrg)
   	//  .group(groupByOrg)
       .width(200)
       .data(data2)
-      .numberOfXLabels(50)
-      .numberOfYLabels(5)
-      .gridsOn()
-      .height(200)
-      .color(0x0000ff);
-
-    var line =  THREEDC.lineChart(panel2);
-       line
-    //  .dimension(dimByOrg)
-    //  .group(groupByOrg)
-      .width(200)
-      .data(data2)
-      .numberOfXLabels(50)
-      .numberOfYLabels(5)
-      .gridsOn()
-      .height(200)
-      .color(0x0000ff);
-
-
-
-    var line =  THREEDC.smoothCurveChart(panel2);
-       line
-    //  .dimension(dimByOrg)
-    //  .group(groupByOrg)
-      .width(200)
-      .data(data1)
       .numberOfXLabels(50)
       .numberOfYLabels(5)
       .gridsOn()
@@ -238,6 +199,8 @@ function update()
 }
 
 
+
+
 /*var camera, scene, renderer;
 var geometry, material, mesh;
 
@@ -261,7 +224,7 @@ function init() {
     mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
-    var idchart = $element.children().find(".chartc3");
+    var idchart = $element.children().find(".chartvr");
     console.log(idchart);
 
     renderer = new THREE.WebGLRenderer();
@@ -286,7 +249,8 @@ function animate() {
 }*/
 
 
-/*	var idchart = $element.children().find(".chartc3");
+
+/*	var idchart = $element.children().find(".chartvr");
 	var config = {};
 	config.bindto = idchart[0];
 	config.data = {};
@@ -337,7 +301,7 @@ setTimeout(function () {
 	var x_axis_values = [];
 	var parsed_data = [];
 	var chart_labels = {};
-	var idchart = $element.children().find(".chartc3");
+	var idchart = $element.children().find(".chartvr");
 	const message = 'This chart require more than one data point. Try adding an X-Axis Aggregation.';
 	
 
