@@ -43,8 +43,6 @@ THREE = require("three");
 
 module.controller('KbnVRVisController', function($scope, $element, Private){
 
-
-
 //////////
 // MAIN //
 //////////
@@ -63,6 +61,51 @@ var container, scene, camera, renderer, controls, stats;
   var dimByOrg;
 
   var groupByOrg;
+
+
+$scope.tags=[];
+  $scope.$watch('esResponse', function(resp) {
+    if (!resp) {
+      $scope.tags = null;
+      return;
+    }
+
+    // Retrieve the id of the configured tags aggregation
+    var tagsAggId = $scope.vis.aggs.bySchemaName['tags'][0].id;
+    console.log(tagsAggId);
+    // Retrieve the metrics aggregation configured
+    var metricsAgg = $scope.vis.aggs.bySchemaName['tagsize'][0];
+    console.log(metricsAgg);
+    // Get the buckets of that aggregation
+    var buckets = resp.aggregations[tagsAggId].buckets;
+
+    // Transform all buckets into tag objects
+    $scope.tags = buckets.map(function(bucket) {
+      // Use the getValue function of the aggregation to get the value of a bucket
+      var value = metricsAgg.getValue(bucket);
+
+      return {
+        key: bucket.key,
+        value: value
+      };
+    });
+    console.log($scope.tags);
+    //redibujar pie con los nuevos datos
+    var line3 =  THREEDC.pieChart([0,100,0]);
+       line3
+    //  .dimension(dimByOrg)
+    //  .group(groupByOrg)
+      .width(200)
+      .data($scope.tags)
+      .numberOfXLabels(50)
+      .numberOfYLabels(5)
+      .gridsOn()
+      .height(200)
+      .color(0x0000ff);
+
+  THREEDC.renderAll();
+  });
+
 
       init();
       // animation loop / game loop
@@ -156,20 +199,33 @@ function init () {
   //data without CF
 
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
-
-  var data2= [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}];
-
+  console.log(data1);
+  var data2= [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
+  console.log(data2);
+  console.log($scope.tags);
  //CUSTOM DASHBOARD//
 
   THREEDC.initializer(camera,scene,renderer, idchart[0]);
 
 
-    var line =  THREEDC.pieChart();
+    var line =  THREEDC.pieChart([50,0,0]);
        line
   	//  .dimension(dimByOrg)
   	//  .group(groupByOrg)
       .width(200)
       .data(data2)
+      .numberOfXLabels(50)
+      .numberOfYLabels(5)
+      .gridsOn()
+      .height(200)
+      .color(0x0000ff);
+
+    var line2 =  THREEDC.pieChart([-70,0,0]);
+       line2
+    //  .dimension(dimByOrg)
+    //  .group(groupByOrg)
+      .width(200)
+      .data(data1)
       .numberOfXLabels(50)
       .numberOfYLabels(5)
       .gridsOn()

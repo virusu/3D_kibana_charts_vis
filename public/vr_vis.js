@@ -28,24 +28,24 @@ function vrVisProvider(Private) {
   			},
             editor: vrVisParamsTemplate
 	    },     
-      schemas: new Schemas([
-            {
-            group: 'metrics',
-              name: 'metric',
-              title: 'Y-axis metric',
-              min: 1,
-              max: 5,
-              defaults: [ { type: 'count', schema: 'metric' } ],
-              //aggFilter: ['count']      
-            },
-            {
-                group: 'buckets',
-                name: 'buckets',
-                title: 'X-Axis',
-                min: 1,
-                max: 1,
-                aggFilter: ['!geohash_grid']
-            }
+    // Define the aggregation your visualization accepts
+    schemas: new Schemas([
+        {
+          group: 'metrics',
+          name: 'tagsize',
+          title: 'Tagsize',
+          min: 1,
+          max: 1,
+          aggFilter: ['count', 'avg', 'sum', 'min', 'max', 'cardinality', 'std_dev']
+        },
+        {
+          group: 'buckets',
+          name: 'tags',
+          title: 'Tags',
+          min: 1,
+          max: 1,
+          aggFilter: '!geohash_grid'
+        }
       ])
 
     });
