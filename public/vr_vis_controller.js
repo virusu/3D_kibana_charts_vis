@@ -9,8 +9,6 @@ const module = uiModules.get('kibana/vr_vis', ['kibana']);
 THREE = require("three");
 
 
-  require('plugins/vr_charts/scm-commits.json');
-
 	require("plugins/vr_charts/FontUtils");
   console.log(THREE.FontUtils);
 	require("plugins/vr_charts/TextGeometry");
@@ -21,15 +19,15 @@ THREE = require("three");
   console.log(THREEx.DomEvents);
 	Detector = require("plugins/vr_charts/Detector");
   console.log(Detector);
-	Stats = require("plugins/vr_charts/Stats");
-  console.log(Stats);
+/*	Stats = require("plugins/vr_charts/Stats");
+  console.log(Stats);*/
 	require("plugins/vr_charts/OrbitControls");
   console.log(THREE.OrbitControls);
 	//require("plugins/vr_charts/THREEx.WindowResize");
   //console.log(THREEx.WindowResize);
-  console.log(THREEx.DomEvents);
-	require("plugins/vr_charts/THREEx.FullScreen");
-  console.log(THREEx.FullScreen);
+  //console.log(THREEx.DomEvents);
+	//require("plugins/vr_charts/THREEx.FullScreen");
+  //console.log(THREEx.FullScreen);
 
   dat = require('plugins/vr_charts/dat.gui');
 
@@ -100,15 +98,17 @@ $scope.slices=[];
        $scope.pie
     //  .dimension(dimByOrg)
     //  .group(groupByOrg)
-      .width(200)
+      //.width(200)
       .data($scope.slices)
-      .numberOfXLabels(50)
-      .numberOfYLabels(5)
-      .gridsOn()
-      .height(200)
+     // .numberOfXLabels(50)
+      //.numberOfYLabels(5)
+      //.gridsOn()
+      //.height(200)
+      .radius(50)
       .color(0x0000ff);
 
   $scope.pie.render();
+
   });
 
       init();
@@ -184,12 +184,12 @@ function init () {
    //scene.add(axes);
 
   //STATS
-  stats = new Stats();
-  stats.domElement.style.position = 'absolute';
-  stats.domElement.style.bottom = '0px';
-  stats.domElement.style.zIndex = 100;
+  //stats = new Stats();
+  //stats.domElement.style.position = 'absolute';
+  //stats.domElement.style.bottom = '0px';
+  //stats.domElement.style.zIndex = 100;
 
-  container.appendChild(stats.domElement);
+  //container.appendChild(stats.domElement);
    //////////////
    // CUSTOM //
    //////////////
@@ -198,13 +198,11 @@ function init () {
    //  a collection of points ("geometry") and
    //  a set of surface parameters ("material")
 
-  var parsed_data=[];
-
   //data without CF
 
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   console.log(data1);
-  var data2= [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
+  var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   console.log(data2);
   console.log($scope.slices);
  //CUSTOM DASHBOARD//
@@ -255,7 +253,7 @@ function render()
 function update()
 {
   THREEDC.controls.update();
-  stats.update();
+  //stats.update();
 }
 
 
