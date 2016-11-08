@@ -41,24 +41,14 @@ THREE = require("three");
 
 module.controller('KbnVRVisController', function($scope, $element, Private){
 
-//////////
-// MAIN //
-//////////
+
+var filterManager = Private(require('ui/filter_manager'));
+
+
 
 // standard global variables
-var container, scene, camera, renderer, controls, stats;
+var container, scene, camera, renderer, controls;
 
-//CROSSFILTER VARS
-
- var cf;
-
- var dimByMonth;
-
- var groupByMonth;
-
-  var dimByOrg;
-
-  var groupByOrg;
 
 $scope.pie = null;
 
@@ -110,6 +100,20 @@ $scope.slices=[];
   $scope.pie.render();
 
   });
+
+    $scope.filter = function() {
+    // Add a new filter via the filter manager
+    filterManager.add(
+      // The field to filter for, we can get it from the config
+      $scope.vis.aggs.bySchemaName['slices'][0].params.field,
+      // The value to filter for, we will read out the bucket key from the tag
+      $scope.slices[0].key,
+      // Whether the filter is negated. If you want to create a negated filter pass '-' here
+      null,
+      // The index pattern for the filter
+      $scope.vis.indexPattern.title
+    );
+  };
 
       init();
       // animation loop / game loop
