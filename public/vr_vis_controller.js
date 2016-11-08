@@ -25,8 +25,8 @@ THREE = require("three");
   console.log(Stats);
 	require("plugins/vr_charts/OrbitControls");
   console.log(THREE.OrbitControls);
-	require("plugins/vr_charts/THREEx.WindowResize");
-  console.log(THREEx.WindowResize);
+	//require("plugins/vr_charts/THREEx.WindowResize");
+  //console.log(THREEx.WindowResize);
   console.log(THREEx.DomEvents);
 	require("plugins/vr_charts/THREEx.FullScreen");
   console.log(THREEx.FullScreen);
@@ -62,25 +62,30 @@ var container, scene, camera, renderer, controls, stats;
 
   var groupByOrg;
 
+$scope.pie = null;
 
-$scope.tags=[];
+$scope.slices=[];
   $scope.$watch('esResponse', function(resp) {
     if (!resp) {
-      $scope.tags = null;
+      $scope.slices = null;
       return;
     }
 
+    if ($scope.pie){
+      $scope.pie.remove();
+      console.log("pie removed");
+    }
     // Retrieve the id of the configured tags aggregation
-    var tagsAggId = $scope.vis.aggs.bySchemaName['tags'][0].id;
-    console.log(tagsAggId);
+    var slicesAggId = $scope.vis.aggs.bySchemaName['slices'][0].id;
+    console.log(slicesAggId);
     // Retrieve the metrics aggregation configured
-    var metricsAgg = $scope.vis.aggs.bySchemaName['tagsize'][0];
+    var metricsAgg = $scope.vis.aggs.bySchemaName['slice_size'][0];
     console.log(metricsAgg);
     // Get the buckets of that aggregation
-    var buckets = resp.aggregations[tagsAggId].buckets;
+    var buckets = resp.aggregations[slicesAggId].buckets;
 
     // Transform all buckets into tag objects
-    $scope.tags = buckets.map(function(bucket) {
+    $scope.slices = buckets.map(function(bucket) {
       // Use the getValue function of the aggregation to get the value of a bucket
       var value = metricsAgg.getValue(bucket);
 
@@ -89,23 +94,22 @@ $scope.tags=[];
         value: value
       };
     });
-    console.log($scope.tags);
+    console.log($scope.slices);
     //redibujar pie con los nuevos datos
-    var line3 =  THREEDC.pieChart([0,100,0]);
-       line3
+    $scope.pie =  THREEDC.pieChart();
+       $scope.pie
     //  .dimension(dimByOrg)
     //  .group(groupByOrg)
       .width(200)
-      .data($scope.tags)
+      .data($scope.slices)
       .numberOfXLabels(50)
       .numberOfYLabels(5)
       .gridsOn()
       .height(200)
       .color(0x0000ff);
 
-  THREEDC.renderAll();
+  $scope.pie.render();
   });
-
 
       init();
       // animation loop / game loop
@@ -129,8 +133,8 @@ function init () {
    // CAMERA //
    ////////////
    // set the view size in pixels (custom or according to window size)
-   var SCREEN_WIDTH = 600;
-   var SCREEN_HEIGHT = 800;
+   var SCREEN_WIDTH = 1280;
+   var SCREEN_HEIGHT = 1024;
    // camera attributes
    var VIEW_ANGLE = 45;
    var ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT;
@@ -150,7 +154,7 @@ function init () {
    //////////////
    renderer = new THREE.WebGLRenderer( {antialias:true} );
    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-   renderer.setClearColor( 0xd8d8d8 );
+   renderer.setClearColor( 0xffffff );
    container = idchart[0];
    container.appendChild(renderer.domElement);
     ////////////
@@ -160,9 +164,9 @@ function init () {
 
 
   // automatically resize renderer
-  THREEx.WindowResize(renderer, camera);
+  //THREEx.WindowResize(renderer, camera);
     // toggle full-screen on given key press
-  THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+  //THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
 
 
    ///////////
@@ -176,8 +180,8 @@ function init () {
 
    // create a set of coordinate axes to help orient user
    //    specify length in pixels in each direction
-   var axes = new THREE.AxisHelper(1000);
-   scene.add(axes);
+   //var axes = new THREE.AxisHelper(1000);
+   //scene.add(axes);
 
   //STATS
   stats = new Stats();
@@ -202,13 +206,13 @@ function init () {
   console.log(data1);
   var data2= [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   console.log(data2);
-  console.log($scope.tags);
+  console.log($scope.slices);
  //CUSTOM DASHBOARD//
 
   THREEDC.initializer(camera,scene,renderer, idchart[0]);
 
 
-    var line =  THREEDC.pieChart([50,0,0]);
+/*    var line =  THREEDC.pieChart([50,0,0]);
        line
   	//  .dimension(dimByOrg)
   	//  .group(groupByOrg)
@@ -232,7 +236,7 @@ function init () {
       .height(200)
       .color(0x0000ff);
 
-  THREEDC.renderAll();
+  THREEDC.renderAll();*/
 
 }
 
