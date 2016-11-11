@@ -1,12 +1,11 @@
 {
-	"name": "vr_charts",
-	"version": "1.1.0",
-	"authors": [
-  		"Viorel Rusu"
-  	],
-  	"dependencies" : {
-    	"three": "^0.77.0",
-    	"three.regular.helvetiker": "^1.0.0"
-
-  	}
+  "name": "vr_charts",
+  "version": "1.2.0",
+  "authors": [
+    "Viorel Rusu"
+  ],
+  "dependencies": {
+    "three": "^0.77.0",
+    "three.regular.helvetiker": "^1.0.0"
+  }
 }

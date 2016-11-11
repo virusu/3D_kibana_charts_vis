@@ -28,8 +28,10 @@ THREEDC.initializer=function(camera,scene,renderer,container) {
 	//with this, we can use standard dom events without raycasting
 	THREEDC.domEvents  = new THREEx.DomEvents(THREEDC.camera, THREEDC.renderer.domElement);
 	//a little graphical interface//
+	
+	console.log(THREEDC.gui);
 	THREEDC.gui = new dat.GUI();
-
+	console.log(THREEDC.gui);
 	THREEDC.parameters =
 	{
 		plane:"XZ",
