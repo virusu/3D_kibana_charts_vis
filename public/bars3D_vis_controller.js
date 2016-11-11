@@ -1,4 +1,5 @@
 import uiModules from 'ui/modules';
+import AggResponseTabifyTabifyProvider from 'ui/agg_response/tabify/tabify';
 import errors from 'ui/errors';	
 
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
@@ -37,7 +38,7 @@ THREE = require("three");
   var typeface2 = require('plugins/vr_charts/helvetiker_bold.typeface');
   THREE.typeface_js.loadFace(typeface2);
 
-module.controller('KbnVRVisController', function($scope, $element, Private){
+module.controller('BarsController', function($scope, $element, Private){
 
 
 var filterManager = Private(require('ui/filter_manager'));
@@ -81,19 +82,34 @@ $scope.slices=[];
       };
     });
     console.log($scope.slices);
-    //redibujar pie con los nuevos datos
-    $scope.pie =  THREEDC.pieChart();
-       $scope.pie
-    //  .dimension(dimByOrg)
-    //  .group(groupByOrg)
-      //.width(200)
-      .data($scope.slices)
-     // .numberOfXLabels(50)
-      //.numberOfYLabels(5)
-      //.gridsOn()
-      //.height(200)
-      .radius(50)
-      .color(0x0000ff);
+
+
+  var data= [{key1:'january',key2:'apple',value:23},{key1:'february',key2:'apple',value:31},{key1:'march',key2:'apple',value:10},{key1:'april',key2:'apple',value:59},
+
+            {key1:'january',key2:'google',value:34},{key1:'february',key2:'google',value:89},{key1:'march',key2:'google',value:53},{key1:'april',key2:'google',value:76},
+
+            {key1:'january',key2:'microsoft',value:10},{key1:'february',key2:'microsoft',value:5},{key1:'march',key2:'microsoft',value:4},{key1:'april',key2:'microsoft',value:12},
+
+            {key1:'january',key2:'sony',value:56},{key1:'february',key2:'sony',value:21},{key1:'march',key2:'sony',value:23},{key1:'april',key2:'sony',value:12}
+  ];
+
+
+var testFunction = function (argument) {
+   console.log( argument);
+ }
+
+    $scope.pie = THREEDC.TDbarsChart();
+      $scope.pie
+      .data(data)
+      .width(400)
+      .height(500)
+      .depth(400)
+      .barSeparation(0.8)
+      .clickCallBackFunction(testFunction)
+      .opacity(0.95)
+      .color(0xffaa00)
+      .gridsOn(0xffffff);
+
 
   $scope.pie.render();
 
@@ -123,7 +139,7 @@ $scope.slices=[];
 function init () {
 
 
-   var idchart = $element.children().find(".chartvr");
+   var idchart = $element.children().find(".chartbars");
    ///////////
    // SCENE //
    ///////////
