@@ -232,9 +232,14 @@ THREEx.DomEvents.prototype.unbind	= function(object3d, eventName, callback, useC
 		break;
 	}
 	// from this object from this._boundObjs
-	var index	= this._boundObjs[eventName].indexOf(object3d);
-	console.assert( index !== -1 );
-	this._boundObjs[eventName].splice(index, 1);
+
+	if(this._boundObjs[eventName]){
+		var index	= this._boundObjs[eventName].indexOf(object3d);
+		console.assert( index !== -1 );
+		this._boundObjs[eventName].splice(index, 1);
+	}else{
+		//console.log('you are trying to unbind unexist events');
+	}
 }
 THREEx.DomEvents.prototype.removeEventListener	= THREEx.DomEvents.prototype.unbind
 
@@ -472,5 +477,4 @@ THREEx.DomEvents.prototype._onTouchEvent	= function(eventName, domEvent)
 	var mouseY	= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;
 	this._onEvent(eventName, mouseX, mouseY, domEvent);	
 }
-
 module.exports = THREEx;

@@ -256,9 +256,9 @@ THREEDC.baseMixin = function (_chart) {
     _chart.addEvents=function(){
 
     	//custom events
-    	if(_chart._clickCallBackFunction){
+    	if(_chart._addCustomEvents){
 	    	for (var i = 0; i < _chart.parts.length; i++) {
-	    		_chart._clickCallBackFunction(_chart.parts[i]);
+	    		_chart._addCustomEvents(_chart.parts[i]);
 	    	};
     	}else{
 	    	//events by default
@@ -775,12 +775,12 @@ THREEDC.baseMixin = function (_chart) {
     	return _chart;
     }
 
-    _chart.clickCallBackFunction=function(argFunction){
+    _chart.addCustomEvents=function(argFunction){
     	if(!arguments.length){
     		console.log('argument needed');
     		return;
     	}
-    	_chart._clickCallBackFunction=argFunction;
+    	_chart._addCustomEvents=argFunction;
     	return _chart;
     }
 
@@ -923,7 +923,8 @@ THREEDC.pieChart = function (location) {
 			piePart.data={
 				key:_data[i].key,
 				value:_data[i].value
-			}
+			};
+			piePart.parentChart=_chart;
 			_chart.parts.push(piePart);
 			angPrev=nextAng;
 		}
@@ -1016,6 +1017,7 @@ THREEDC.barsChart = function (location){
 				key:_data[i].key,
 				value:_data[i].value
 			};
+			bar.parentChart=_chart;
 			_chart.parts.push(bar);
 			x+=barWidth;
 
@@ -1584,6 +1586,12 @@ THREEDC.TDbarsChart = function (location){
 	            bar.origin_color=origin_color;
 	            bar.position.set(stepX+_chart.coords.x,y+_chart.coords.y,stepZ+_chart.coords.z);
 	            bar.name = "key1:"+_chart._data[dataPos].key1+" key2:"+_chart._data[dataPos].key2+" value: "+_chart._data[dataPos].value;
+	            bar.data={
+	            	ke1:_chart._data[dataPos].key1,
+	            	key2:_chart._data[dataPos].key2,
+	            	value:_chart._data[dataPos].value
+	            };
+	            bar.parentChart=_chart;
 	            _chart.parts.push(bar);
 				 stepX+=_chart._width/numberOfKeys1.length;
 	   			dataPos++;
@@ -1814,6 +1822,7 @@ THREEDC.lineChart= function (location) {
 					key:_data[i].key,
 					value:_data[i].value
 				};
+				linePart.parentChart=_chart;
 				x+=barWidth;
 				_chart.parts.push(linePart);
 	   		}

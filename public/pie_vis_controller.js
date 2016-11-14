@@ -49,8 +49,10 @@ var container, scene, camera, renderer, controls;
 
 
 $scope.pie = null;
-
 $scope.slices=[];
+
+ 
+
   $scope.$watch('esResponse', function(resp) {
     if (!resp) {
       $scope.slices = null;
@@ -61,55 +63,69 @@ $scope.slices=[];
       $scope.pie.remove();
       console.log("pie removed");
     }
-    // Retrieve the id of the configured tags aggregation
-    var slicesAggId = $scope.vis.aggs.bySchemaName['slices'][0].id;
-    console.log(slicesAggId);
-    // Retrieve the metrics aggregation configured
-    var metricsAgg = $scope.vis.aggs.bySchemaName['slice_size'][0];
-    console.log(metricsAgg);
-    // Get the buckets of that aggregation
-    var buckets = resp.aggregations[slicesAggId].buckets;
+    //if slices aggregation exists, that is, user has configured it
+    if ($scope.vis.aggs.bySchemaName['slices']) {
+      // Retrieve the id of the configured tags aggregation
+      var slicesAggId = $scope.vis.aggs.bySchemaName['slices'][0].id;
+      //console.log(slicesAggId);
+      // Retrieve the metrics aggregation configured
+      var metricsAgg = $scope.vis.aggs.bySchemaName['slice_size'][0];
+      //console.log(metricsAgg);
+      // Get the buckets of that aggregation
+      var buckets = resp.aggregations[slicesAggId].buckets;
 
-    // Transform all buckets into tag objects
-    $scope.slices = buckets.map(function(bucket) {
-      // Use the getValue function of the aggregation to get the value of a bucket
-      var value = metricsAgg.getValue(bucket);
+      // Transform all buckets into tag objects
+      $scope.slices = buckets.map(function(bucket) {
+        // Use the getValue function of the aggregation to get the value of a bucket
+        var value = metricsAgg.getValue(bucket);
 
-      return {
-        key: bucket.key,
-        value: value
-      };
-    });
-    console.log($scope.slices);
-    //redibujar pie con los nuevos datos
-    $scope.pie =  THREEDC.pieChart();
-       $scope.pie
-    //  .dimension(dimByOrg)
-    //  .group(groupByOrg)
-      //.width(200)
-      .data($scope.slices)
-     // .numberOfXLabels(50)
-      //.numberOfYLabels(5)
-      //.gridsOn()
-      //.height(200)
-      .radius(50)
-      .color(0x0000ff);
+        return {
+          key: bucket.key,
+          value: value
+        };
+      });
+      console.log($scope.slices);
+      //redibujar pie con los nuevos datos
+      $scope.pie =  THREEDC.pieChart();
+         $scope.pie
+      //  .dimension(dimByOrg)
+      //  .group(groupByOrg)
+        //.width(200)
+        .data($scope.slices)
+        .addCustomEvents(filter)
+       // .numberOfXLabels(50)
+        //.numberOfYLabels(5)
+        //.gridsOn()
+        //.height(200)
+        .radius(50)
+        .color(0x0000ff);
 
-  $scope.pie.render();
+    $scope.pie.render();
+}
 
   });
 
-    $scope.filter = function() {
+  var testFunction = function (mesh) {
+      THREEDC.domEvents.bind(mesh, 'mouseover', function(object3d){ 
+        console.log(mesh.data.key);
+      });
+ }
+
+ var filter = function(mesh) {
+    THREEDC.domEvents.bind(mesh, 'click', function(object3d){ 
+
     filterManager.add(
       // The field to filter for, we can get it from the config
       $scope.vis.aggs.bySchemaName['slices'][0].params.field,
       // The value to filter for, we will read out the bucket key
-      $scope.slices[0].key,
+      //$scope.slices[0].key,
+      mesh.data.key,
       // Whether the filter is negated. If you want to create a negated filter pass '-' here
       null,
       // The index pattern for the filter
       $scope.vis.indexPattern.title
     );
+  });
   };
 
       init();
