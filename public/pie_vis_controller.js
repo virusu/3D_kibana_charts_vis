@@ -113,7 +113,7 @@ $scope.slices=[];
 
  var filter = function(mesh) {
     THREEDC.domEvents.bind(mesh, 'click', function(object3d){ 
-
+    console.log(mesh.data);
     filterManager.add(
       // The field to filter for, we can get it from the config
       $scope.vis.aggs.bySchemaName['slices'][0].params.field,
