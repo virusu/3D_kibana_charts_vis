@@ -10,10 +10,10 @@ export default function pieVisProvider(Private) {
     const Schemas = Private(VisSchemasProvider);
 	
     return new TemplateVisType({
-  		name: 'vrCharts',
-  		title: 'Vio Rusu charts widget',
-  		icon: 'fa-bicycle',
-  		description: 'Just a sample visualization for checking threedc integration in kibana',
+  		name: 'Pie3DChart',
+  		title: '3D Pie chart',
+  		icon: 'fa-pie-chart',
+  		description: 'A cool 3D pie for your visualization',
   		template: pieVisTemplate,
 /*  		params: {
   			defaults: {

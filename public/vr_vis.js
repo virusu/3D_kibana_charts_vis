@@ -8,4 +8,4 @@ import visTypes from 'ui/registry/vis_types';
 visTypes.register(require('plugins/vr_charts/pie3D'));
 visTypes.register(require('plugins/vr_charts/bars3D'));
 
-require('../node_modules/c3/c3.css');
+//require('../node_modules/c3/c3.css');

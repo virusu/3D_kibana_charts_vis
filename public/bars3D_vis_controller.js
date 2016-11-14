@@ -77,7 +77,8 @@ $scope.slices=[];
       var value = metricsAgg.getValue(bucket);
 
       return {
-        key: bucket.key,
+        key1: bucket.key,
+        key2: "key2",
         value: value
       };
     });
@@ -94,18 +95,14 @@ $scope.slices=[];
   ];
 
 
-var testFunction = function (argument) {
-   console.log( argument);
- }
-
     $scope.pie = THREEDC.TDbarsChart();
       $scope.pie
-      .data(data)
+      .data($scope.slices)
       .width(400)
       .height(500)
       .depth(400)
       .barSeparation(0.8)
-      .clickCallBackFunction(testFunction)
+      .addCustomEvents(filter)
       .opacity(0.95)
       .color(0xffaa00)
       .gridsOn(0xffffff);
@@ -115,17 +112,21 @@ var testFunction = function (argument) {
 
   });
 
-    $scope.filter = function() {
+ var filter = function(mesh) {
+    THREEDC.domEvents.bind(mesh, 'click', function(object3d){ 
+    console.log(mesh.data);
     filterManager.add(
       // The field to filter for, we can get it from the config
       $scope.vis.aggs.bySchemaName['slices'][0].params.field,
       // The value to filter for, we will read out the bucket key
-      $scope.slices[0].key,
+      //$scope.slices[0].key,
+      mesh.data.key1,
       // Whether the filter is negated. If you want to create a negated filter pass '-' here
       null,
       // The index pattern for the filter
       $scope.vis.indexPattern.title
     );
+  });
   };
 
       init();
@@ -149,8 +150,8 @@ function init () {
    // CAMERA //
    ////////////
    // set the view size in pixels (custom or according to window size)
-   var SCREEN_WIDTH = 1280;
-   var SCREEN_HEIGHT = 1024;
+   var SCREEN_WIDTH = 800;
+   var SCREEN_HEIGHT = 600;
    // camera attributes
    var VIEW_ANGLE = 45;
    var ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT;

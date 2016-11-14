@@ -1587,7 +1587,7 @@ THREEDC.TDbarsChart = function (location){
 	            bar.position.set(stepX+_chart.coords.x,y+_chart.coords.y,stepZ+_chart.coords.z);
 	            bar.name = "key1:"+_chart._data[dataPos].key1+" key2:"+_chart._data[dataPos].key2+" value: "+_chart._data[dataPos].value;
 	            bar.data={
-	            	ke1:_chart._data[dataPos].key1,
+	            	key1:_chart._data[dataPos].key1,
 	            	key2:_chart._data[dataPos].key2,
 	            	value:_chart._data[dataPos].value
 	            };
