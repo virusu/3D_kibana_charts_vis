@@ -37,7 +37,7 @@ THREE = require("three");
   var typeface2 = require('plugins/vr_charts/helvetiker_bold.typeface');
   THREE.typeface_js.loadFace(typeface2);
 
-module.controller('KbnVRVisController', function($scope, $element, Private){
+module.controller('PieController', function($scope, $element, Private){
 
 
 var filterManager = Private(require('ui/filter_manager'));

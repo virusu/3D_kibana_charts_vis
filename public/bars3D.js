@@ -11,7 +11,7 @@ export default function bars3DVisProvider(Private) {
 	
     return new TemplateVisType({
   		name: 'Bars3DChart',
-  		title: 'Vio Rusu 3D Bars Chart',
+  		title: '3D Bars Chart',
   		icon: 'fa-bar-chart',
   		description: 'A 3D bars chart. Great for representing 3D data',
   		template: barsVisTemplate,
