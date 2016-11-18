@@ -5,7 +5,7 @@ import errors from 'ui/errors';
 // didn't already
 const module = uiModules.get('kibana/vr_vis', ['kibana']);
 
-THREE = require("three");
+  require('plugins/vr_charts/Three');
 
 	require("plugins/vr_charts/FontUtils");
   console.log(THREE.FontUtils);
@@ -13,9 +13,9 @@ THREE = require("three");
   console.log(THREE.TextGeometry);
 	require("plugins/vr_charts/Projector");
   console.log(THREE.RenderableObject);
-	THREEx = require("plugins/vr_charts/threex.domevents");
+	require("plugins/vr_charts/threex.domevents");
   console.log(THREEx.DomEvents);
-	Detector = require("plugins/vr_charts/Detector");
+	require("plugins/vr_charts/Detector");
   console.log(Detector);
 /*	Stats = require("plugins/vr_charts/Stats");
   console.log(Stats);*/
@@ -30,7 +30,7 @@ THREE = require("three");
   require('plugins/vr_charts/DAT.GUI.min');
 
 	THREEDC = require("plugins/vr_charts/3dc");
-  console.log(THREEDC.version);
+  console.log(THREEDC);
 
   var typeface = require('three.regular.helvetiker');
   THREE.typeface_js.loadFace(typeface);

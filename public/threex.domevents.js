@@ -477,4 +477,3 @@ THREEx.DomEvents.prototype._onTouchEvent	= function(eventName, domEvent)
 	var mouseY	= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;
 	this._onEvent(eventName, mouseX, mouseY, domEvent);	
 }
-module.exports = THREEx;

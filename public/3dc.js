@@ -2173,7 +2173,4 @@ function onMouseMove( event ) {
   }
 }
 
-
-
-
 module.exports = THREEDC;
