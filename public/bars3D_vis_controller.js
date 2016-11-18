@@ -49,30 +49,31 @@ var filterManager = Private(require('ui/filter_manager'));
 var container, scene, camera, renderer, controls;
 
 
-$scope.pie = null;
+$scope.barschart = null;
 
-$scope.slices=[];
+$scope.bars=[];
   $scope.$watch('esResponse', function(resp) {
     if (!resp) {
-      $scope.slices = null;
+      $scope.bars = null;
       return;
     }
 
-    if ($scope.pie){
-      $scope.pie.remove();
+    if ($scope.barschart){
+      $scope.barschart.remove();
       console.log("pie removed");
     }
+    if ($scope.vis.aggs.bySchemaName['bars']) {
     // Retrieve the id of the configured tags aggregation
-    var slicesAggId = $scope.vis.aggs.bySchemaName['slices'][0].id;
-    console.log(slicesAggId);
+    var barsAggId = $scope.vis.aggs.bySchemaName['bars'][0].id;
+    console.log(barsAggId);
     // Retrieve the metrics aggregation configured
-    var metricsAgg = $scope.vis.aggs.bySchemaName['slice_size'][0];
+    var metricsAgg = $scope.vis.aggs.bySchemaName['bars_height'][0];
     console.log(metricsAgg);
     // Get the buckets of that aggregation
-    var buckets = resp.aggregations[slicesAggId].buckets;
+    var buckets = resp.aggregations[barsAggId].buckets;
 
     // Transform all buckets into tag objects
-    $scope.slices = buckets.map(function(bucket) {
+    $scope.bars = buckets.map(function(bucket) {
       // Use the getValue function of the aggregation to get the value of a bucket
       var value = metricsAgg.getValue(bucket);
 
@@ -82,7 +83,7 @@ $scope.slices=[];
         value: value
       };
     });
-    console.log($scope.slices);
+    console.log($scope.bars);
 
 
   var data= [{key1:'january',key2:'apple',value:23},{key1:'february',key2:'apple',value:31},{key1:'march',key2:'apple',value:10},{key1:'april',key2:'apple',value:59},
@@ -95,20 +96,21 @@ $scope.slices=[];
   ];
 
 
-    $scope.pie = THREEDC.TDbarsChart();
-      $scope.pie
-      .data($scope.slices)
+    $scope.barschart = THREEDC.TDbarsChart();
+      $scope.barschart
+      .data($scope.bars)
       .width(400)
       .height(500)
       .depth(400)
       .barSeparation(0.8)
-      .addCustomEvents(filter)
+      //.addCustomEvents(filter)
       .opacity(0.95)
       .color(0xffaa00)
       .gridsOn(0xffffff);
 
 
-  $scope.pie.render();
+  $scope.barschart.render();
+  }
 
   });
 
@@ -117,9 +119,9 @@ $scope.slices=[];
     console.log(mesh.data);
     filterManager.add(
       // The field to filter for, we can get it from the config
-      $scope.vis.aggs.bySchemaName['slices'][0].params.field,
+      $scope.vis.aggs.bySchemaName['bars'][0].params.field,
       // The value to filter for, we will read out the bucket key
-      //$scope.slices[0].key,
+      //$scope.bars[0].key,
       mesh.data.key1,
       // Whether the filter is negated. If you want to create a negated filter pass '-' here
       null,
@@ -188,7 +190,7 @@ function init () {
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
-  THREEDC.initializer(camera,scene,renderer, idchart[0]);
+  THREEDC(camera,scene,renderer, idchart[0]);
 
 
 }

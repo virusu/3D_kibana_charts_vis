@@ -92,7 +92,7 @@ $scope.slices=[];
       //  .group(groupByOrg)
         //.width(200)
         .data($scope.slices)
-        .addCustomEvents(filter)
+        //.addCustomEvents(filter)
        // .numberOfXLabels(50)
         //.numberOfYLabels(5)
         //.gridsOn()
@@ -187,7 +187,7 @@ function init () {
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
-  THREEDC.initializer(camera,scene,renderer, idchart[0]);
+  THREEDC(camera,scene,renderer, idchart[0]);
 
 
 }

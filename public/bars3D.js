@@ -27,16 +27,16 @@ export default function bars3DVisProvider(Private) {
     schemas: new Schemas([
         {
           group: 'metrics',
-          name: 'slice_size',
-          title: 'Slice Size',
+          name: 'bars_height',
+          title: 'Bars Height',
           min: 1,
           max: 1,
           aggFilter: ['count', 'avg', 'sum', 'min', 'max', 'cardinality', 'std_dev']
         },
         {
           group: 'buckets',
-          name: 'slices',
-          title: 'Slices',
+          name: 'bars',
+          title: 'Bars',
           min: 1,
           max: 1,
           aggFilter: '!geohash_grid'

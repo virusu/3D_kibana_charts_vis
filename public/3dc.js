@@ -1,20 +1,21 @@
-var THREEDC={
-	version:'0.1-b',
-	allCharts:[],
-	allPanels:[],
-	textLabel:null,
-	chartToDrag:null,
-	intervalFilter:[],
-	raycaster : new THREE.Raycaster(),
-	mouse : new THREE.Vector2(),
-	offset : new THREE.Vector3()
-};
 
-THREEDC.initializer=function(camera,scene,renderer,container) {
+function THREEDC (camera,scene,renderer,container) {
+
 	THREEDC.camera=camera;
 	THREEDC.scene=scene;
 	THREEDC.renderer=renderer;
 	THREEDC.container=container;
+
+
+	THREEDC.version='0.1-b';
+	THREEDC.allCharts=[];
+	THREEDC.allPanels=[];
+	THREEDC.textLabel=null;
+	THREEDC.chartToDrag=null;
+	THREEDC.intervalFilter=[];
+	THREEDC.raycaster = new THREE.Raycaster();
+	THREEDC.mouse = new THREE.Vector2();
+	THREEDC.offset = new THREE.Vector3();
 	   //////////////
    // CONTROLS //
    //////////////
@@ -259,12 +260,29 @@ THREEDC.baseMixin = function (_chart) {
     	if(_chart._addCustomEvents){
 	    	for (var i = 0; i < _chart.parts.length; i++) {
 	    		_chart._addCustomEvents(_chart.parts[i]);
+	    		//mouseover and mouse out events added here too for now
+	    		addInfoEvents(_chart.parts[i]);
 	    	};
     	}else{
 	    	//events by default
 	    	for (var i = 0; i < _chart.parts.length; i++) {
 	    		addEvents(_chart.parts[i]);
 	    	};
+    	}
+
+    	function addInfoEvents (mesh) {
+			//adds mouseover events
+			THREEDC.domEvents.bind(mesh, 'mouseover', function(object3d){ 
+				changeMeshColor(mesh);
+				showInfo(mesh);
+			});
+
+			THREEDC.domEvents.bind(mesh, 'mouseout', function(object3d){ 
+				//restores the original color
+				if(mesh.type!='Line'){
+					mesh.material.emissive.setHex(mesh.currentHex);
+				}
+			});
     	}
 
 		function addEvents (mesh) {
@@ -379,7 +397,6 @@ THREEDC.baseMixin = function (_chart) {
 			 	 mesh.currentHex=mesh.material.emissive.getHex();
 		 		 mesh.material.emissive.setHex(mesh.origin_color);
 			}
-
 		}
     }
 
@@ -666,6 +683,15 @@ THREEDC.baseMixin = function (_chart) {
 		return topValue;
 	}
 
+    _chart.getTopValue2=function() {
+		var topValue2 = _chart._data[0].value2;
+		for (var i = 1; i < _chart._data.length; i++) {
+			if (_chart._data[i].value2 > topValue2) topValue2=_chart._data[i].value2;
+		};
+
+		return topValue2;
+	}
+
 	_chart.sortCFData=function() {
 	    var unsort_data=_chart._group.top(Infinity);
 
@@ -797,262 +823,10 @@ THREEDC.baseMixin = function (_chart) {
 
 }
 
-THREEDC.pieChart = function (location) {
+THREEDC.threeDMixin = function (_chart) {
 
-   if(location===undefined){
-   	location=[0,0,0];
-   }
-	//by default
-	var _radius=50;
-	
-	var _chart = THREEDC.baseMixin({});
-	_chart._width=_radius;
-	_chart._height=_radius;
-	//by default
-	_chart._depth=5;
-	_chart._opacity=0.8;
-	var _data;
-
-	if(location.isPanel){
-		for (var i = 0; i < location.anchorPoints.length; i++) {
-			if(!location.anchorPoints[i].filled){
-				_chart.coords=location.anchorPoints[i].coords;
-				_chart.coords.x=_chart.coords.x+_chart._width;
-				_chart.coords.y=_chart.coords.y+_chart._height;
-				location.anchorPoints[i].filled=true;
-				location.charts.push(_chart);
-				_chart.panel=location;
-				break;
-			}
-		};
-	}else{
-		_chart.coords= new THREE.Vector3( location[0], location[1], location[2] );
-	}
-
-	THREEDC.allCharts.push(_chart);
-
-	_chart.radius=function(radius){
-		_radius=radius;
-		_chart._width=radius;
-		_chart._height=radius;
-		return _chart;
-	}
-
-
-	_chart.getTotalValue=function(){
-		var totalValue=0;
-
-		for (var i = 0; i < _chart._data.length; i++) {
-			totalValue +=_chart._data[i].value;
-		};
-
-		return totalValue;
-	}
-
-    _chart.build=function () {
-
-	   if(_chart._group===undefined && _chart._data===undefined){
-	   	console.log('You must define a group or an array of data for this chart');
-	   	return;
-	   }
-
-	   if(_chart._group && _chart._data){
-	   	console.log('You must define a crossfilter group or an array of data, never both');
-	   	return;
-	   }
-
-	   var valTotal;
-	   var _data;
-
-   	   if(_chart._group){
-   	   		//_chart._dimension.filterAll();
-   	   		_data=_chart._group.top(Infinity).filter(function(d) { return d.value > 0; });
-			 valTotal=0;
-			for (var i = 0; i < _data.length; i++) {
-				valTotal +=_data[i].value;
-			};
-   	   }
-
-   	   if(_chart._data){
-	   		 valTotal=_chart.getTotalValue();
-   	   		 _data=_chart._data;
-   	   }
-
-		var  extrudeOpts = {curveSegments:30,
-							amount: _chart._depth,
-							bevelEnabled: true,
-							bevelSegments: 4,
-							steps: 2,
-							bevelSize: 1,
-							bevelThickness: 1 };
-
-   	    //console.log('length dimension'+_chart._dimension.top(Infinity).length);
-   	    //console.log('length group'+_chart._group.top(Infinity).length);
-
-		var angPrev=0;
-		var angToMove=0;
-
-		for (var i = 0; i < _data.length; i++) {
-			if(_data[i].value===0){
-				//break;
-			}
-			var origin_color=Math.random() * 0xffffff
-		        var material = new THREE.MeshPhongMaterial( {color: origin_color,
-                                            	        specular: 0x999999,
-                                            	        shininess: 100,
-                                            	        shading : THREE.SmoothShading,
-                                               	 		opacity:_chart._opacity,
-                                           				transparent: true
-            } );				
-             // Creats the shape, based on the value and the _radius
-			var shape = new THREE.Shape();
-			var angToMove = (Math.PI*2*(_data[i].value/valTotal));
-			shape.moveTo(0,0);
-			shape.arc(0,0,_radius,angPrev,
-			        angPrev+angToMove,false);
-			shape.lineTo(0,0);
-			var nextAng = angPrev + angToMove;
-
-			var geometry = new THREE.ExtrudeGeometry( shape, extrudeOpts );
-			var piePart = new THREE.Mesh( geometry, material );
-			piePart.material.color.setHex(origin_color);
-			piePart.origin_color=origin_color;
-			//piePart.rotation.set(0,0,0);
-			piePart.position.set(_chart.coords.x,_chart.coords.y,_chart.coords.z);
-			piePart.name ="key:"+_data[i].key+" value:"+_data[i].value;
-			piePart.data={
-				key:_data[i].key,
-				value:_data[i].value
-			};
-			piePart.parentChart=_chart;
-			_chart.parts.push(piePart);
-			angPrev=nextAng;
-		}
-
-		_chart.addEvents();
-    }
-
-	return _chart;
-}
-
-THREEDC.barsChart = function (location){
-
-	if(location==undefined){
-		location=[0,0,0];
-	}
-
-	var _chart = THREEDC.baseMixin({});
-
-		//by default
-	_chart._depth=5;
-	_chart._opacity=0.8;
-	
-	if(location.isPanel){
-		for (var i = 0; i < location.anchorPoints.length; i++) {
-			if(!location.anchorPoints[i].filled){
-				_chart.coords=location.anchorPoints[i].coords;
-				location.anchorPoints[i].filled=true;
-				location.charts.push(_chart);
-				_chart.panel=location;
-				break;
-			}
-		};
-	}else{
-		_chart.coords= new THREE.Vector3( location[0], location[1], location[2] );
-	}
-	_chart._color=0x0000ff;
-
-	THREEDC.allCharts.push(_chart);
-
-	_chart.build = function() {
-	   if(_chart._group===undefined && _chart._data===undefined){
-	   	console.log('You must define a group or an array of data for this chart');
-	   	return;
-	   }
-
-	   if(_chart._group && _chart._data){
-	   	console.log('You must define a crossfilter group or an array of data, never both');
-	   	return;
-	   }
-
-	   var numberOfValues;
-	   var topValue;
-	   var _data;
-
-   	   if(_chart._group){
-   	   		topValue=_chart._group.top(1)[0].value;
-   	   		numberOfValues=_chart._group.top(Infinity).length;
-   	   		_data=_chart.sortCFData();
-   	   }
-
-   	   if(_chart._data){
-	   		 topValue=_chart.getTopValue();
-	   		 numberOfValues=_chart._data.length;
-   	   		 _data=_chart._data;
-   	   }
-
-	 
-	   var barWidth=_chart._width/numberOfValues;
-
-	   var y;
-	   var x=barWidth/2;
-
-		for (var i = 0; i < _data.length; i++) {
-	      	var barHeight=(_chart._height*_data[i].value)/topValue;
-	 		var geometry = new THREE.CubeGeometry( barWidth, barHeight, _chart._depth);
-			y=barHeight/2;
-			var origin_color=_chart._color;
-   		    var material = new THREE.MeshPhongMaterial( {color: origin_color,
-                                                	     specular: 0x999999,
-                                                	     shininess: 100,
-                                                	     shading : THREE.SmoothShading,
-                                                   	     opacity:_chart._opacity,
-                                               		     transparent: true
-            } );
-			var bar = new THREE.Mesh(geometry, material);
-			bar.origin_color=origin_color;
-			bar.position.set(x+_chart.coords.x,y+_chart.coords.y,_chart.coords.z+_chart._depth/2);
-			bar.name = "key:"+_data[i].key+" value: "+_data[i].value;
-			bar.data={
-				key:_data[i].key,
-				value:_data[i].value
-			};
-			bar.parentChart=_chart;
-			_chart.parts.push(bar);
-			x+=barWidth;
-
-		};
-
-	    _chart.addEvents();
-	    _chart.addLabels();
-		if (_chart._gridsOn) _chart.addGrids();
-    }
-   
-    return _chart;
-}
-
-
-THREEDC.TDbarsChart = function (location){
-
-	if(location==undefined){
-		location=[0,0,0];
-	}
-
-	var _chart = THREEDC.baseMixin({});
-
-	//add to 3Dmixin when added
+	_chart = THREEDC.baseMixin(_chart);
 	_chart.labels=[];
-
-		//by default
-	_chart._depth=100;
-	_chart._opacity=0.8;
-	_chart._barSeparation=0.7;
-
-	_chart.coords= new THREE.Vector3( location[0], location[1], location[2] );
-	_chart._color=0x0000ff;
-
-	THREEDC.allCharts.push(_chart);
-
 
     _chart.groupOne=function(group){
     	if(!arguments.length){
@@ -1538,6 +1312,265 @@ THREEDC.TDbarsChart = function (location){
     	};
     	_chart.labels=[];
     }
+	return _chart;
+
+}
+
+THREEDC.pieChart = function (location) {
+
+   if(location===undefined){
+   	location=[0,0,0];
+   }
+	//by default
+	var _radius=50;
+	
+	var _chart = THREEDC.baseMixin({});
+	_chart._width=_radius;
+	_chart._height=_radius;
+	//by default
+	_chart._depth=5;
+	_chart._opacity=0.8;
+	var _data;
+
+	if(location.isPanel){
+		for (var i = 0; i < location.anchorPoints.length; i++) {
+			if(!location.anchorPoints[i].filled){
+				_chart.coords=location.anchorPoints[i].coords;
+				_chart.coords.x=_chart.coords.x+_chart._width;
+				_chart.coords.y=_chart.coords.y+_chart._height;
+				location.anchorPoints[i].filled=true;
+				location.charts.push(_chart);
+				_chart.panel=location;
+				break;
+			}
+		};
+	}else{
+		_chart.coords= new THREE.Vector3( location[0], location[1], location[2] );
+	}
+
+	THREEDC.allCharts.push(_chart);
+
+	_chart.radius=function(radius){
+		_radius=radius;
+		_chart._width=radius;
+		_chart._height=radius;
+		return _chart;
+	}
+
+
+	_chart.getTotalValue=function(){
+		var totalValue=0;
+
+		for (var i = 0; i < _chart._data.length; i++) {
+			totalValue +=_chart._data[i].value;
+		};
+
+		return totalValue;
+	}
+
+    _chart.build=function () {
+
+	   if(_chart._group===undefined && _chart._data===undefined){
+	   	console.log('You must define a group or an array of data for this chart');
+	   	return;
+	   }
+
+	   if(_chart._group && _chart._data){
+	   	console.log('You must define a crossfilter group or an array of data, never both');
+	   	return;
+	   }
+
+	   var valTotal;
+	   var _data;
+
+   	   if(_chart._group){
+   	   		//_chart._dimension.filterAll();
+   	   		_data=_chart._group.top(Infinity).filter(function(d) { return d.value > 0; });
+			 valTotal=0;
+			for (var i = 0; i < _data.length; i++) {
+				valTotal +=_data[i].value;
+			};
+   	   }
+
+   	   if(_chart._data){
+	   		 valTotal=_chart.getTotalValue();
+   	   		 _data=_chart._data;
+   	   }
+
+		var  extrudeOpts = {curveSegments:30,
+							amount: _chart._depth,
+							bevelEnabled: true,
+							bevelSegments: 4,
+							steps: 2,
+							bevelSize: 1,
+							bevelThickness: 1 };
+
+   	    //console.log('length dimension'+_chart._dimension.top(Infinity).length);
+   	    //console.log('length group'+_chart._group.top(Infinity).length);
+
+		var angPrev=0;
+		var angToMove=0;
+
+		for (var i = 0; i < _data.length; i++) {
+			if(_data[i].value===0){
+				//break;
+			}
+			var origin_color=Math.random() * 0xffffff
+		        var material = new THREE.MeshPhongMaterial( {color: origin_color,
+                                            	        specular: 0x999999,
+                                            	        shininess: 100,
+                                            	        shading : THREE.SmoothShading,
+                                               	 		opacity:_chart._opacity,
+                                           				transparent: true
+            } );				
+             // Creats the shape, based on the value and the _radius
+			var shape = new THREE.Shape();
+			var angToMove = (Math.PI*2*(_data[i].value/valTotal));
+			shape.moveTo(0,0);
+			shape.arc(0,0,_radius,angPrev,
+			        angPrev+angToMove,false);
+			shape.lineTo(0,0);
+			var nextAng = angPrev + angToMove;
+
+			var geometry = new THREE.ExtrudeGeometry( shape, extrudeOpts );
+			var piePart = new THREE.Mesh( geometry, material );
+			piePart.material.color.setHex(origin_color);
+			piePart.origin_color=origin_color;
+			//piePart.rotation.set(0,0,0);
+			piePart.position.set(_chart.coords.x,_chart.coords.y,_chart.coords.z);
+			piePart.name ="key:"+_data[i].key+" value:"+_data[i].value;
+			piePart.data={
+				key:_data[i].key,
+				value:_data[i].value
+			};
+			piePart.parentChart=_chart;
+			_chart.parts.push(piePart);
+			angPrev=nextAng;
+		}
+
+		_chart.addEvents();
+    }
+
+	return _chart;
+}
+
+THREEDC.barsChart = function (location){
+
+	if(location==undefined){
+		location=[0,0,0];
+	}
+
+	var _chart = THREEDC.baseMixin({});
+
+		//by default
+	_chart._depth=5;
+	_chart._opacity=0.8;
+	
+	if(location.isPanel){
+		for (var i = 0; i < location.anchorPoints.length; i++) {
+			if(!location.anchorPoints[i].filled){
+				_chart.coords=location.anchorPoints[i].coords;
+				location.anchorPoints[i].filled=true;
+				location.charts.push(_chart);
+				_chart.panel=location;
+				break;
+			}
+		};
+	}else{
+		_chart.coords= new THREE.Vector3( location[0], location[1], location[2] );
+	}
+	_chart._color=0x0000ff;
+
+	THREEDC.allCharts.push(_chart);
+
+	_chart.build = function() {
+	   if(_chart._group===undefined && _chart._data===undefined){
+	   	console.log('You must define a group or an array of data for this chart');
+	   	return;
+	   }
+
+	   if(_chart._group && _chart._data){
+	   	console.log('You must define a crossfilter group or an array of data, never both');
+	   	return;
+	   }
+
+	   var numberOfValues;
+	   var topValue;
+	   var _data;
+
+   	   if(_chart._group){
+   	   		topValue=_chart._group.top(1)[0].value;
+   	   		numberOfValues=_chart._group.top(Infinity).length;
+   	   		_data=_chart.sortCFData();
+   	   }
+
+   	   if(_chart._data){
+	   		 topValue=_chart.getTopValue();
+	   		 numberOfValues=_chart._data.length;
+   	   		 _data=_chart._data;
+   	   }
+
+	 
+	   var barWidth=_chart._width/numberOfValues;
+
+	   var y;
+	   var x=barWidth/2;
+
+		for (var i = 0; i < _data.length; i++) {
+	      	var barHeight=(_chart._height*_data[i].value)/topValue;
+	 		var geometry = new THREE.CubeGeometry( barWidth, barHeight, _chart._depth);
+			y=barHeight/2;
+			var origin_color=_chart._color;
+   		    var material = new THREE.MeshPhongMaterial( {color: origin_color,
+                                                	     specular: 0x999999,
+                                                	     shininess: 100,
+                                                	     shading : THREE.SmoothShading,
+                                                   	     opacity:_chart._opacity,
+                                               		     transparent: true
+            } );
+			var bar = new THREE.Mesh(geometry, material);
+			bar.origin_color=origin_color;
+			bar.position.set(x+_chart.coords.x,y+_chart.coords.y,_chart.coords.z+_chart._depth/2);
+			bar.name = "key:"+_data[i].key+" value: "+_data[i].value;
+			bar.data={
+				key:_data[i].key,
+				value:_data[i].value
+			};
+			bar.parentChart=_chart;
+			_chart.parts.push(bar);
+			x+=barWidth;
+
+		};
+
+	    _chart.addEvents();
+	    _chart.addLabels();
+		if (_chart._gridsOn) _chart.addGrids();
+    }
+   
+    return _chart;
+}
+
+
+THREEDC.TDbarsChart = function (location){
+
+	if(location==undefined){
+		location=[0,0,0];
+	}
+
+	var _chart = THREEDC.threeDMixin({});
+
+	//add to 3Dmixin when added
+	_chart.labels=[];
+
+		//by default
+	_chart._depth=100;
+	_chart._opacity=0.8;
+	_chart._barSeparation=0.7;
+
+	_chart.coords= new THREE.Vector3( location[0], location[1], location[2] );
+	_chart._color=0x0000ff;
+
+	THREEDC.allCharts.push(_chart);
 
     // (0,1)> 1 no separation
     //
@@ -1933,7 +1966,7 @@ THREEDC.bubbleChart= function (location) {
 		location=[0,0,0];
 	}
 
-	var _chart = THREEDC.baseMixin({});
+	var _chart = THREEDC.threeDMixin({});
 
 		//by default
 	_chart._depth=100;
@@ -1944,41 +1977,18 @@ THREEDC.bubbleChart= function (location) {
 
 	THREEDC.allCharts.push(_chart);
 
-
-    _chart.groupOne=function(group){
-    	if(!arguments.length){
-    		console.log('argument needed');
-    		return;
-    	}
-    	_chart._groupOne=group;
-    	return _chart;
-    }
-
-    _chart.groupTwo=function(group){
-    	if(!arguments.length){
-    		console.log('argument needed');
-    		return;
-    	}
-    	_chart._groupTwo=group;
-    	return _chart;
-    }
-
-    _chart.getKeysOne=function() {
-    	var keysOne=[];
-		for (var i = 0; i < _chart._data.length; i++) {
-			if(keysOne.indexOf(_chart._data[i].key1)===-1) keysOne.push(_chart._data[i].key1);
-
+	_chart.getTopRadius=function() {
+		var topRadius;
+		var chartDimensions=[_chart._width,_chart._height,_chart._depth];
+		var minDimension=_chart._width;
+		for (var i = 1; i < chartDimensions.length; i++) {
+			if(chartDimensions[i]<minDimension){
+				minDimension=chartDimensions[i];
+			}
 		};
-		return keysOne;
-    }
-
-    _chart.getKeysTwo=function() {
-    	var keysTwo=[];
-		for (var i = 0; i < _chart._data.length; i++) {
-			if(keysTwo.indexOf(_chart._data[i].key2)===-1) keysTwo.push(_chart._data[i].key2);
-		};
-		return keysTwo;
-    }
+		topRadius=minDimension/2;
+		return topRadius;
+	}
 
 	_chart.build = function() {
 		/*
@@ -1988,24 +1998,21 @@ THREEDC.bubbleChart= function (location) {
 	   }
 	   */
 	   var topValue=_chart.getTopValue();
+	   var topValue2=_chart.getTopValue2();
+	   var topBubbleRadius=_chart.getTopRadius();
+
 	   var numberOfKeys1=_chart.getKeysOne();
 	   var numberOfKeys2=_chart.getKeysTwo();
-	   var barHeight;
-	   var barWidth=_chart._width/numberOfKeys1.length;
-	   var barDepth=_chart._depth/numberOfKeys2.length;
+	   
 	   var dataPos=0;
-	   var x=0;
+	   var stepX=0;
    	   var y=0;
-	   var z=0;
-
+   	   var stepZ=_chart._depth/numberOfKeys2.length/2;
 	   for (var i = 0; i < numberOfKeys2.length; i++) {
-	   		x=barWidth/2;
-	   		z+=barDepth;
+	   		stepX =_chart._width/numberOfKeys1.length/2;
+	   		var origin_color =Math.random() * 0xffffff;
 	   		for (var j = 0; j < numberOfKeys1.length; j++) {
-	   			barHeight=(_chart._height*_chart._data[dataPos].value)/topValue;
-	   			y=barHeight/2;
-				var geometry = new THREE.SphereGeometry(Math.random()*100,32,32);
-				var origin_color=Math.random() * 0xffffff;
+				var geometry = new THREE.SphereGeometry(_chart._data[dataPos].value2,32,32);
 	   		    var material = new THREE.MeshPhongMaterial( {color: origin_color,
 	                                                	     specular: 0x999999,
 	                                                	     shininess: 100,
@@ -2013,14 +2020,23 @@ THREEDC.bubbleChart= function (location) {
 	                                                   	     opacity:_chart._opacity,
 	                                               		     transparent: true
 	            } );
-	            var bar = new THREE.Mesh(geometry, material);
-	            console.log(bar);
-	            bar.position.set(x+_chart.coords.x,y+_chart.coords.y,z+_chart.coords.z);
-	            _chart.parts.push(bar);
-	            scene.add(bar);
-	            x+=barWidth;
+	            var bubble = new THREE.Mesh(geometry, material);
+	            bubble.origin_color=origin_color;
+	            y=(_chart._height*_chart._data[dataPos].value)/topValue;
+	            bubble.position.set(stepX+_chart.coords.x,y+_chart.coords.y,stepZ+_chart.coords.z);
+	            bubble.name = "key1:"+_chart._data[dataPos].key1+" key2:"+_chart._data[dataPos].key2+" value: "+_chart._data[dataPos].value+" value2: "+_chart._data[dataPos].value2;
+	            bubble.data={
+	            	key1:_chart._data[dataPos].key1,
+	            	key2:_chart._data[dataPos].key2,
+	            	value:_chart._data[dataPos].value,
+	            	value:_chart._data[dataPos].value2
+	            };
+	            bubble.parentChart=_chart;
+	            _chart.parts.push(bubble);
+	            stepX+=_chart._width/numberOfKeys1.length;
 	   			dataPos++;
 	   		};
+	   		stepZ+=_chart._depth/numberOfKeys2.length;
 	   };
 
 	    _chart.addEvents();
@@ -2156,5 +2172,8 @@ function onMouseMove( event ) {
     return;
   }
 }
+
+
+
 
 module.exports = THREEDC;
