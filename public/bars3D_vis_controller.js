@@ -1,6 +1,6 @@
 import uiModules from 'ui/modules';
 import errors from 'ui/errors';	
-
+(function () {
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
 // didn't already
 const module = uiModules.get('kibana/vr_vis', ['kibana']);
@@ -122,8 +122,8 @@ function init () {
    // CAMERA //
    ////////////
    // set the view size in pixels (custom or according to window size)
-   var SCREEN_WIDTH = 800;
-   var SCREEN_HEIGHT = 600;
+   var SCREEN_WIDTH = 400 + 468.52 - 25;
+   var SCREEN_HEIGHT = 400 + 178.89 - 25;
    // camera attributes
    var VIEW_ANGLE = 45;
    var ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT;
@@ -143,7 +143,7 @@ function init () {
    //////////////
    renderer = new THREE.WebGLRenderer( {antialias:true} );
    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-   renderer.setClearColor( 0xffffff );
+   renderer.setClearColor( 0xd8d8d8 );
    container = idchart[0];
    container.appendChild(renderer.domElement);
 
@@ -184,5 +184,5 @@ function update()
 }
 
 });
-
+}());
 

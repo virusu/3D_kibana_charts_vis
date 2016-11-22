@@ -1,21 +1,19 @@
 import uiModules from 'ui/modules';
 import errors from 'ui/errors';	
 
+(function () {
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
 // didn't already
 const module = uiModules.get('kibana/vr_vis', ['kibana']);
+/*  const ElementQueries = require('css-element-queries/src/ElementQueries');
+  const ResizeSensor = require('css-element-queries/src/ResizeSensor');*/
 
 module.controller('PieController', function($scope, $element, Private){
 
-
-
-  console.log(THREEx.DomEvents);
 var filterManager = Private(require('ui/filter_manager'));
 
-
-
 // standard global variables
-var container, scene, camera, renderer, controls;
+var containerpie, scenepie, camerapie, rendererpie;
 
 
 $scope.pie = null;
@@ -55,6 +53,7 @@ $scope.slices=[];
         };
       });
       console.log($scope.slices);
+
       //redibujar pie con los nuevos datos
       $scope.pie =  THREEDC.pieChart();
          $scope.pie
@@ -68,9 +67,17 @@ $scope.slices=[];
         //.gridsOn()
         //.height(200)
         .radius(50)
-        .color(0x0000ff);
+        .color(0xffaa00);
 
-    $scope.pie.render();
+/*        console.log(containerpie.getBoundingClientRect());
+        new ResizeSensor(containerpie, function() {
+            console.log('Diiiv');
+            //network.setSize('150px', '150px');
+            rendererpie.setSize(containerpie.getBoundingClientRect().width, containerpie.getBoundingClientRect().height);
+        });*/
+
+
+      $scope.pie.render();
 }
 
   });
@@ -113,36 +120,36 @@ function initpie () {
    ///////////
    // SCENE //
    ///////////
-   scene = new THREE.Scene();
+   scenepie = new THREE.Scene();
 
    ////////////
    // CAMERA //
    ////////////
    // set the view size in pixels (custom or according to window size)
-   var SCREEN_WIDTH = 1280;
-   var SCREEN_HEIGHT = 1024;
+   var SCREEN_WIDTH = 400 + 468.52 - 25;
+   var SCREEN_HEIGHT = 400 + 178.89 - 25;
    // camera attributes
    var VIEW_ANGLE = 45;
    var ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT;
    var NEAR = 0.1;
    var FAR = 20000;
       // set up camera
-   camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+   camerapie = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
    // add the camera to the scene
-   scene.add(camera);
+   scenepie.add(camerapie);
    // the camera defaults to position (0,0,0)
    //    so pull it back (z = 400) and up (y = 100) and set the angle towards the scene origin
-   camera.position.set(0,150,400);
-   camera.lookAt(scene.position);
+   camerapie.position.set(0,150,400);
+   camerapie.lookAt(scenepie.position);
 
    //////////////
    // RENDERER //
    //////////////
-   renderer = new THREE.WebGLRenderer( {antialias:true} );
-   renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-   renderer.setClearColor( 0xffffff );
-   container = idchart[0];
-   container.appendChild(renderer.domElement);
+   rendererpie = new THREE.WebGLRenderer( {antialias:true} );
+   rendererpie.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+   rendererpie.setClearColor( 0xd8d8d8 );
+   containerpie = idchart[0];
+   containerpie.appendChild(rendererpie.domElement);
 
 
    ///////////
@@ -150,14 +157,14 @@ function initpie () {
    ///////////
    var light = new THREE.PointLight(0xffffff,0.8);
    light.position.set(0,200,250);
-   scene.add(light);
+   scenepie.add(light);
    var ambientLight = new THREE.AmbientLight(0x111111);
 
 
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
-  THREEDC(camera,scene,renderer, idchart[0]);
+  THREEDC(camerapie,scenepie,rendererpie, containerpie);
 
 
 }
@@ -171,7 +178,7 @@ function animatepie()
 
 function renderpie()
 {
-   renderer.render( scene, camera );
+   rendererpie.render( scenepie, camerapie );
 }
 
 function updatepie()
@@ -183,3 +190,4 @@ function updatepie()
 });
 
 
+}());

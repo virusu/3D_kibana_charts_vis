@@ -4,7 +4,6 @@ import pieVisTemplate from 'plugins/vr_charts/pie_vis.html';
 
 import 'plugins/vr_charts/pie_vis_controller';
 
-
 export default function pieVisProvider(Private) {
     var TemplateVisType = Private(TemplateVisTypeTemplateVisTypeProvider);
     const Schemas = Private(VisSchemasProvider);
