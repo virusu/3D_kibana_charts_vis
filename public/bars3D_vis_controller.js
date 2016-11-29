@@ -20,38 +20,49 @@ var container, scene, camera, renderer, controls;
 
 
 $scope.barschart = null;
-
 $scope.bars=[];
   $scope.$watch('esResponse', function(resp) {
     if (!resp) {
-      $scope.bars = null;
+      $scope.bars = [];
       return;
     }
 
     if ($scope.barschart){
+      $scope.bars = [];
       $scope.barschart.remove();
       console.log("barschart removed");
     }
     if ($scope.vis.aggs.bySchemaName['bars']) {
     // Retrieve the id of the configured tags aggregation
-    var barsAggId = $scope.vis.aggs.bySchemaName['bars'][0].id;
-    console.log(barsAggId);
+    var barsxAggId = $scope.vis.aggs.bySchemaName['bars'][0].id;
+    var barsyAggId = $scope.vis.aggs.bySchemaName['bars'][1].id;
+    console.log(barsxAggId);
+    console.log(barsyAggId);
     // Retrieve the metrics aggregation configured
     var metricsAgg = $scope.vis.aggs.bySchemaName['bars_height'][0];
     console.log(metricsAgg);
     // Get the buckets of that aggregation
-    var buckets = resp.aggregations[barsAggId].buckets;
+
+    var bucketsx = resp.aggregations[barsxAggId].buckets;
+    //var bucketsy = resp.aggregations[barsyAggId].buckets;
+
+    console.log(bucketsx);
+    console.log($scope.vis.aggs.bySchemaName);
+    console.log(resp.aggregations);
 
     // Transform all buckets into tag objects
-    $scope.bars = buckets.map(function(bucket) {
+    bucketsx.map(function(bucketx) {
       // Use the getValue function of the aggregation to get the value of a bucket
-      var value = metricsAgg.getValue(bucket);
 
-      return {
-        key1: bucket.key,
-        key2: "key2",
-        value: value
-      };
+
+      var bucketsy = bucketx[barsyAggId].buckets;
+
+    bucketsy.map(function(buckety){
+
+      var value = metricsAgg.getValue(buckety);
+      $scope.bars.push({key1:bucketx.key, key2:buckety.key, value: value});
+
+     })
     });
     console.log($scope.bars);
 
@@ -160,7 +171,7 @@ function init () {
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
-  THREEDC(camera,scene,renderer, idchart[0]);
+  THREEDC(camera,scene,renderer, container);
 
 
 }

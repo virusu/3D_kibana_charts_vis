@@ -31,6 +31,8 @@ $scope.slices=[];
       $scope.pie.remove();
       console.log("pie removed");
     }
+
+    console.log(containerpie);
     //if slices aggregation exists, that is, user has configured it
     if ($scope.vis.aggs.bySchemaName['slices']) {
       // Retrieve the id of the configured tags aggregation

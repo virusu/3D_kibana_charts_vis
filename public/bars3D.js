@@ -38,7 +38,7 @@ export default function bars3DVisProvider(Private) {
           name: 'bars',
           title: 'Bars',
           min: 1,
-          max: 1,
+          max: 2,
           aggFilter: '!geohash_grid'
         }
       ])
