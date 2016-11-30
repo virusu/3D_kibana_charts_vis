@@ -20,21 +20,24 @@ $scope.pie = null;
 $scope.slices=[];
 
  
-
+  //esResponse holds the result of the elasticSearch query
+  //resp is the actual value of esResponse
   $scope.$watch('esResponse', function(resp) {
+    //if user has eliminated aggregations, return
     if (!resp) {
       $scope.slices = null;
       return;
     }
 
-    if ($scope.pie){
+/*    if ($scope.pie){
       $scope.pie.remove();
       console.log("pie removed");
-    }
+    }*/
 
     console.log(containerpie);
     //if slices aggregation exists, that is, user has configured it
     if ($scope.vis.aggs.bySchemaName['slices']) {
+
       // Retrieve the id of the configured tags aggregation
       var slicesAggId = $scope.vis.aggs.bySchemaName['slices'][0].id;
       //console.log(slicesAggId);
@@ -56,8 +59,13 @@ $scope.slices=[];
       });
       console.log($scope.slices);
 
+
+      if ($scope.pie){
+        $scope.pie.data($scope.slices);
+        $scope.pie.reBuild();
+      } else {
       //redibujar pie con los nuevos datos
-      $scope.pie =  THREEDC.pieChart();
+      $scope.pie = THREEDC.pieChart();
          $scope.pie
       //  .dimension(dimByOrg)
       //  .group(groupByOrg)
@@ -80,6 +88,7 @@ $scope.slices=[];
 
 
       $scope.pie.render();
+    }
 }
 
   });

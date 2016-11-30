@@ -29,9 +29,10 @@ $scope.bars=[];
 
     if ($scope.barschart){
       $scope.bars = [];
-      $scope.barschart.remove();
-      console.log("barschart removed");
+/*      $scope.barschart.remove();
+      console.log("barschart removed");*/
     }
+    //if bars aggregation exists, that is, user has configured it
     if ($scope.vis.aggs.bySchemaName['bars']) {
     // Retrieve the id of the configured tags aggregation
     var barsxAggId = $scope.vis.aggs.bySchemaName['bars'][0].id;
@@ -50,6 +51,7 @@ $scope.bars=[];
     console.log($scope.vis.aggs.bySchemaName);
     console.log(resp.aggregations);
 
+    $scope.bars = [];
     // Transform all buckets into tag objects
     bucketsx.map(function(bucketx) {
       // Use the getValue function of the aggregation to get the value of a bucket
@@ -67,30 +69,35 @@ $scope.bars=[];
     console.log($scope.bars);
 
 
-  var data= [{key1:'january',key2:'apple',value:23},{key1:'february',key2:'apple',value:31},{key1:'march',key2:'apple',value:10},{key1:'april',key2:'apple',value:59},
+//some test data
+/*  var data= [{key1:'january',key2:'apple',value:23},{key1:'february',key2:'apple',value:31},{key1:'march',key2:'apple',value:10},{key1:'april',key2:'apple',value:59},
 
             {key1:'january',key2:'google',value:34},{key1:'february',key2:'google',value:89},{key1:'march',key2:'google',value:53},{key1:'april',key2:'google',value:76},
 
             {key1:'january',key2:'microsoft',value:10},{key1:'february',key2:'microsoft',value:5},{key1:'march',key2:'microsoft',value:4},{key1:'april',key2:'microsoft',value:12},
 
             {key1:'january',key2:'sony',value:56},{key1:'february',key2:'sony',value:21},{key1:'march',key2:'sony',value:23},{key1:'april',key2:'sony',value:12}
-  ];
+  ];*/
 
+      if ($scope.barschart){
+        $scope.barschart.data($scope.bars);
+        $scope.barschart.reBuild();
 
-    $scope.barschart = THREEDC.TDbarsChart();
-      $scope.barschart
-      .data($scope.bars)
-      .width(400)
-      .height(500)
-      .depth(400)
-      .barSeparation(0.8)
-      //.addCustomEvents(filter)
-      .opacity(0.95)
-      .color(0xffaa00)
-      .gridsOn(0xffffff);
+      } else {
+        $scope.barschart = THREEDC.TDbarsChart();
+        $scope.barschart
+        .data($scope.bars)
+        .width(400)
+        .height(500)
+        .depth(400)
+        .barSeparation(0.8)
+        //.addCustomEvents(filter)
+        .opacity(0.95)
+        .color(0xffaa00)
+        .gridsOn(0xffffff);
 
-
-  $scope.barschart.render();
+    $scope.barschart.render();
+  }
   }
 
   });
