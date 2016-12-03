@@ -67,6 +67,9 @@ $scope.bars=[];
      })
     });
     console.log($scope.bars);
+    console.log(getMissingGaps($scope.bars));
+    $scope.bars = $scope.bars.concat(getMissingGaps($scope.bars));
+    console.log($scope.bars);
 
 
 //some test data
@@ -101,6 +104,71 @@ $scope.bars=[];
   }
 
   });
+
+var getKeysOne=function(datos) {
+  var keysOne=[];
+for (var i = 0; i < datos.length; i++) {
+  if(keysOne.indexOf(datos[i].key1)===-1){
+    keysOne.push(datos[i].key1);
+  }
+ }
+return keysOne;
+}
+
+var getKeysTwo=function(datos) {
+  var keysTwo=[];
+for (var i = 0; i < datos.length; i++) {
+  if(keysTwo.indexOf(datos[i].key2)===-1) keysTwo.push(datos[i].key2);
+};
+return keysTwo;
+}
+
+/* Construct structure of this sort (1 = true)
+   1   1
+   1 1 1 1
+   1 1 1 1
+   */
+var getAdditionalMesh = function(keysOne, keysTwo, datos){
+
+  var additionalStructure = [];
+  var ycolumn;
+  var itExists;
+    for (var j = 0; j < keysOne.length; j++){
+    ycolumn = [];
+      for (var k = 0; k < keysTwo.length; k++){
+        for (var i = 0; i < datos.length; i++){
+          itExists = false; 
+          if ((datos[i].key1 === keysOne[j]) && (datos[i].key2 === keysTwo[k])){
+            itExists = true;
+            break;
+          }
+        }
+        ycolumn.push(itExists);
+      }
+    additionalStructure.push(ycolumn);
+    }
+  return additionalStructure;
+}
+
+var convertKey2 = function (datos){
+  
+}
+
+var getMissingGaps = function (datos){
+  var missingGaps = []
+  var keysOne = getKeysOne(datos);
+  var keysTwo = getKeysTwo(datos);
+  var additionalStructure = getAdditionalMesh(keysOne, keysTwo, datos);
+  console.log(additionalStructure);
+  for (var j = 0; j < keysOne.length; j++){
+    for (var k = 0; k < keysTwo.length; k++){
+        if (!additionalStructure[j][k]){
+          missingGaps.push({key1: keysOne[j], key2: keysTwo[k], value: 0})
+        }
+      }
+    }
+  return missingGaps;
+}
 
  var filter = function(mesh) {
     THREEDC.domEvents.bind(mesh, 'click', function(object3d){ 

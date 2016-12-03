@@ -59,7 +59,6 @@ $scope.slices=[];
       });
       console.log($scope.slices);
 
-
       if ($scope.pie){
         $scope.pie.data($scope.slices);
         $scope.pie.reBuild();
