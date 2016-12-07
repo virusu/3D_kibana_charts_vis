@@ -67,8 +67,8 @@ $scope.bars=[];
      })
     });
     console.log($scope.bars);
-    console.log(getMissingGaps($scope.bars));
-    $scope.bars = $scope.bars.concat(getMissingGaps($scope.bars));
+    //$scope.bars = $scope.bars.concat(getMissingGaps($scope.bars));
+    $scope.bars = getOrderedData($scope.bars);
     console.log($scope.bars);
 
 
@@ -123,7 +123,8 @@ for (var i = 0; i < datos.length; i++) {
 return keysTwo;
 }
 
-/* Construct structure of this sort (1 = true)
+/* Construct structure of this sort (1 = actual element, gap = false)
+   (Additional function in order to get Missing gaps)
    1   1
    1 1 1 1
    1 1 1 1
@@ -139,7 +140,7 @@ var getAdditionalMesh = function(keysOne, keysTwo, datos){
         for (var i = 0; i < datos.length; i++){
           itExists = false; 
           if ((datos[i].key1 === keysOne[j]) && (datos[i].key2 === keysTwo[k])){
-            itExists = true;
+            itExists = datos[i];
             break;
           }
         }
@@ -150,12 +151,8 @@ var getAdditionalMesh = function(keysOne, keysTwo, datos){
   return additionalStructure;
 }
 
-var convertKey2 = function (datos){
-  
-}
-
-var getMissingGaps = function (datos){
-  var missingGaps = []
+var getOrderedData = function (datos){
+  var finalData = [];
   var keysOne = getKeysOne(datos);
   var keysTwo = getKeysTwo(datos);
   var additionalStructure = getAdditionalMesh(keysOne, keysTwo, datos);
@@ -163,11 +160,18 @@ var getMissingGaps = function (datos){
   for (var j = 0; j < keysOne.length; j++){
     for (var k = 0; k < keysTwo.length; k++){
         if (!additionalStructure[j][k]){
-          missingGaps.push({key1: keysOne[j], key2: keysTwo[k], value: 0})
+          additionalStructure[j][k] = {key1: keysOne[j], key2: keysTwo[k], value: 0};
+          //missingGaps.push({key1: keysOne[j], key2: keysTwo[k], value: 0})
         }
       }
     }
-  return missingGaps;
+
+  for (var j = 0; j < keysTwo.length; j++){
+    for (var k = 0; k < keysOne.length; k++){
+      finalData.push(additionalStructure[k][j]);
+    }
+  }
+  return finalData;
 }
 
  var filter = function(mesh) {
