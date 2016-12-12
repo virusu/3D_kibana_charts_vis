@@ -70,7 +70,7 @@ $scope.slices=[];
       //  .group(groupByOrg)
         //.width(200)
         .data($scope.slices)
-        //.addCustomEvents(filter)
+        .addCustomEvents(filter)
        // .numberOfXLabels(50)
         //.numberOfYLabels(5)
         //.gridsOn()

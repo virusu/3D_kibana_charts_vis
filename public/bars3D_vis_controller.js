@@ -84,7 +84,9 @@ $scope.bars=[];
 
       if ($scope.barschart){
         $scope.barschart.data($scope.bars);
-        $scope.barschart.reBuild();
+        if ($scope.bars.length > 0){
+          $scope.barschart.reBuild();
+        }
 
       } else {
         $scope.barschart = THREEDC.TDbarsChart();
@@ -94,7 +96,7 @@ $scope.bars=[];
         .height(500)
         .depth(400)
         .barSeparation(0.8)
-        //.addCustomEvents(filter)
+        .addCustomEvents(filter)
         .opacity(0.95)
         .color(0xffaa00)
         .gridsOn(0xffffff);
@@ -176,7 +178,7 @@ var getOrderedData = function (datos){
 
  var filter = function(mesh) {
     THREEDC.domEvents.bind(mesh, 'click', function(object3d){ 
-    console.log(mesh.data);
+    console.log(mesh.data.key1);
     filterManager.add(
       // The field to filter for, we can get it from the config
       $scope.vis.aggs.bySchemaName['bars'][0].params.field,
@@ -188,8 +190,27 @@ var getOrderedData = function (datos){
       // The index pattern for the filter
       $scope.vis.indexPattern.title
     );
+
+        filterManager.add(
+      // The field to filter for, we can get it from the config
+      $scope.vis.aggs.bySchemaName['bars'][1].params.field,
+      // The value to filter for, we will read out the bucket key
+      //$scope.bars[0].key,
+      mesh.data.key2,
+      // Whether the filter is negated. If you want to create a negated filter pass '-' here
+      null,
+      // The index pattern for the filter
+      $scope.vis.indexPattern.title
+    );
+
   });
   };
+
+  var testFunction = function (mesh) {
+      THREEDC.domEvents.bind(mesh, 'mouseover', function(object3d){ 
+      console.log(mesh.data.key1);
+      });
+ }
 
       init();
       // animation loop / game loop
