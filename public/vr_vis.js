@@ -42,6 +42,7 @@ define(function(require){
 // register the provider with the visTypes registry
 visTypes.register(require('plugins/vr_charts/pie3D'));
 visTypes.register(require('plugins/vr_charts/bars3D'));
+visTypes.register(require('plugins/vr_charts/bubbles3D'));
 
 //require('../node_modules/c3/c3.css');
 });
