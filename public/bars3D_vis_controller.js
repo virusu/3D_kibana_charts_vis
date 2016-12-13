@@ -177,7 +177,7 @@ var getOrderedData = function (datos){
 }
 
  var filter = function(mesh) {
-    THREEDC.domEvents.bind(mesh, 'click', function(object3d){ 
+    THREEDC.domEvents.bind(mesh, 'mousedown', function(object3d){ 
     console.log(mesh.data.key1);
     filterManager.add(
       // The field to filter for, we can get it from the config
@@ -207,7 +207,8 @@ var getOrderedData = function (datos){
   };
 
   var testFunction = function (mesh) {
-      THREEDC.domEvents.bind(mesh, 'mouseover', function(object3d){ 
+      THREEDC.domEvents.bind(mesh, 'mousedown', function(object3d){ 
+      //alert(mesh.data.key1);
       console.log(mesh.data.key1);
       });
  }
@@ -262,7 +263,7 @@ function init () {
    ///////////
    // LIGHT //
    ///////////
-   var light = new THREE.PointLight(0xffffff,0.8);
+   var light = new THREE.PointLight(0xffffff,1);
    light.position.set(0,200,250);
    scene.add(light);
    var ambientLight = new THREE.AmbientLight(0x111111);
