@@ -13,7 +13,7 @@ var filterManager = Private(require('ui/filter_manager'));
 
 
 // standard global variables
-var container, scene, camera, renderer, controls;
+var dash, container, scene, camera, renderer, controls;
 
 
 $scope.bubbleschart = null;
@@ -97,7 +97,7 @@ $scope.bubbles=[];
         }
 
       } else {
-        $scope.bubbleschart = THREEDC.bubbleChart([0,0,0]);
+        $scope.bubbleschart = dash.bubbleChart([0,0,0]);
         $scope.bubbleschart.data(data2)
          .width(500)
          .height(400)
@@ -180,7 +180,7 @@ var getOrderedData = function (datos){
 }
 
  var filter = function(mesh) {
-    THREEDC.domEvents.bind(mesh, 'mousedown', function(object3d){ 
+    dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
     console.log(mesh.data.key1);
     filterManager.add(
       // The field to filter for, we can get it from the config
@@ -210,7 +210,7 @@ var getOrderedData = function (datos){
   };
 
   var testFunction = function (mesh) {
-      THREEDC.domEvents.bind(mesh, 'mousedown', function(object3d){ 
+      dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
       //alert(mesh.data.key1);
       console.log(mesh.data.key1);
       });
@@ -275,7 +275,7 @@ function init () {
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
-  THREEDC(camera,scene,renderer, container);
+  dash = THREEDC({}, camera,scene,renderer, container);
 
 
 }
@@ -295,7 +295,7 @@ function render()
 function update()
 {
   //#TODO: fix controls
-  THREEDC.controls.update();
+  dash.controls.update();
 }
 
 });

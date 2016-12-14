@@ -13,7 +13,7 @@ module.controller('PieController', function($scope, $element, Private){
 var filterManager = Private(require('ui/filter_manager'));
 
 // standard global variables
-var containerpie, scenepie, camerapie, rendererpie;
+var dash, containerpie, scenepie, camerapie, rendererpie;
 
 
 $scope.pie = null;
@@ -64,7 +64,7 @@ $scope.slices=[];
         $scope.pie.reBuild();
       } else {
       //redibujar pie con los nuevos datos
-      $scope.pie = THREEDC.pieChart();
+      $scope.pie = dash.pieChart();
          $scope.pie
       //  .dimension(dimByOrg)
       //  .group(groupByOrg)
@@ -93,13 +93,13 @@ $scope.slices=[];
   });
 
   var testFunction = function (mesh) {
-      THREEDC.domEvents.bind(mesh, 'mouseover', function(object3d){ 
+      dash.domEvents.bind(mesh, 'mouseover', function(object3d){ 
         console.log(mesh.data.key);
       });
  }
 
  var filter = function(mesh) {
-    THREEDC.domEvents.bind(mesh, 'mousedown', function(object3d){ 
+    dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
     console.log(mesh.data);
     filterManager.add(
       // The field to filter for, we can get it from the config
@@ -174,7 +174,7 @@ function initpie () {
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
-  THREEDC(camerapie,scenepie,rendererpie, containerpie);
+  dash = THREEDC({}, camerapie,scenepie,rendererpie, containerpie);
 
 
 }
@@ -194,7 +194,7 @@ function renderpie()
 function updatepie()
 {
   //#TODO: fix controls
-  THREEDC.controls.update();
+  dash.controls.update();
 }
 
 });
