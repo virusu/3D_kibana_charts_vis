@@ -1,5 +1,8 @@
 import uiModules from 'ui/modules';
 import errors from 'ui/errors';	
+import moment from 'moment';
+import 'ui/timepicker/quick_ranges';
+import 'ui/timepicker/time_units';
 
 (function () {
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
@@ -8,8 +11,9 @@ const module = uiModules.get('kibana/vr_vis', ['kibana']);
 /*  const ElementQueries = require('css-element-queries/src/ElementQueries');
   const ResizeSensor = require('css-element-queries/src/ResizeSensor');*/
 
-module.controller('PieController', function($scope, $element, Private){
+module.controller('PieController', function(quickRanges, timeUnits, $scope, $rootScope, $element, Private, $filter, $timeout){
 
+console.log($scope);
 var filterManager = Private(require('ui/filter_manager'));
 
 // standard global variables
@@ -52,15 +56,29 @@ $scope.slices=[];
         // Use the getValue function of the aggregation to get the value of a bucket
         var value = metricsAgg.getValue(bucket);
 
+        if(bucket.key_as_string){
+
+
+
         return {
-          key: bucket.key,
+          key: bucket.key_as_string,
           value: value
-        };
+          };
+        }
+        else{
+        return{
+            key:bucket.key,
+            value: value
+
+        }
+      }
       });
       console.log($scope.slices);
 
       if ($scope.pie){
         $scope.pie.data($scope.slices);
+        console.log($scope);
+        console.log($scope.timefilter);
         $scope.pie.reBuild();
       } else {
       //redibujar pie con los nuevos datos
@@ -91,6 +109,10 @@ $scope.slices=[];
 }
 
   });
+
+      $rootScope.$$timefilter.time.from = moment('2016-07-05T07:17:27');
+      $rootScope.$$timefilter.time.to = moment('2016-03-05T07:17:27');
+      $rootScope.$$timefilter.time.mode = 'absolute';
 
   var testFunction = function (mesh) {
       dash.domEvents.bind(mesh, 'mouseover', function(object3d){ 
