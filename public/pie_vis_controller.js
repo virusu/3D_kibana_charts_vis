@@ -23,7 +23,6 @@ var dash, containerpie, scenepie, camerapie, rendererpie;
 $scope.pie = null;
 $scope.slices=[];
 
- 
   //esResponse holds the result of the elasticSearch query
   //resp is the actual value of esResponse
   $scope.$watch('esResponse', function(resp) {
@@ -50,17 +49,16 @@ $scope.slices=[];
       //console.log(metricsAgg);
       // Get the buckets of that aggregation
       var buckets = resp.aggregations[slicesAggId].buckets;
-
+      console.log($scope.vis.aggs.bySchemaName['slices'][0].params.interval);
       // Transform all buckets into tag objects
       $scope.slices = buckets.map(function(bucket) {
         // Use the getValue function of the aggregation to get the value of a bucket
         var value = metricsAgg.getValue(bucket);
 
-        if(bucket.key_as_string){
-
-
+        if($scope.vis.aggs[1]._opts.type.includes("date")){
 
         return {
+          //key: moment(bucket.key_as_string).format('YYYY/MM/DD hh:mm'),
           key: bucket.key_as_string,
           value: value
           };
@@ -110,19 +108,28 @@ $scope.slices=[];
 
   });
 
-      $rootScope.$$timefilter.time.from = moment('2016-07-05T07:17:27');
-      $rootScope.$$timefilter.time.to = moment('2016-03-05T07:17:27');
-      $rootScope.$$timefilter.time.mode = 'absolute';
-
   var testFunction = function (mesh) {
       dash.domEvents.bind(mesh, 'mouseover', function(object3d){ 
         console.log(mesh.data.key);
       });
  }
 
+
  var filter = function(mesh) {
     dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
-    console.log(mesh.data);
+
+
+    if ($scope.vis.aggs[1]._opts.type.includes("date")){
+
+      var from = moment(mesh.data.key);
+      var interval = moment($scope.slices[1].key) - moment($scope.slices[0].key);
+      var to = moment(from).add('ms', interval);
+
+      $rootScope.$$timefilter.time.from = from;
+      $rootScope.$$timefilter.time.to = to;
+      $rootScope.$$timefilter.time.mode = 'absolute';
+
+    } else {
     filterManager.add(
       // The field to filter for, we can get it from the config
       $scope.vis.aggs.bySchemaName['slices'][0].params.field,
@@ -134,6 +141,7 @@ $scope.slices=[];
       // The index pattern for the filter
       $scope.vis.indexPattern.title
     );
+  }
   });
   };
 
