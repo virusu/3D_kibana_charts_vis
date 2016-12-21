@@ -1,8 +1,8 @@
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
-import barsVisTemplate from 'plugins/vr_charts/bars3D_vis.html';
+import barsVisTemplate from 'plugins/3D_kibana_charts_vis/bars3D_vis.html';
 
-import 'plugins/vr_charts/bars3D_vis_controller';
+import 'plugins/3D_kibana_charts_vis/bars3D_vis_controller';
 
 
 export default function bars3DVisProvider(Private) {

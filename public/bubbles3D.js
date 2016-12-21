@@ -1,8 +1,8 @@
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
-import BubblesTemplate from 'plugins/vr_charts/bubbles3D.html';
+import BubblesTemplate from 'plugins/3D_kibana_charts_vis/bubbles3D.html';
 
-import 'plugins/vr_charts/bubbles3D_controller';
+import 'plugins/3D_kibana_charts_vis/bubbles3D_controller';
 
 
 export default function bubbles3DVisProvider(Private) {

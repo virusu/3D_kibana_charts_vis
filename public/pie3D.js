@@ -1,8 +1,8 @@
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
-import pieVisTemplate from 'plugins/vr_charts/pie_vis.html';
+import pieVisTemplate from 'plugins/3D_kibana_charts_vis/pie_vis.html';
 
-import 'plugins/vr_charts/pie_vis_controller';
+import 'plugins/3D_kibana_charts_vis/pie_vis_controller';
 
 export default function pieVisProvider(Private) {
     var TemplateVisType = Private(TemplateVisTypeTemplateVisTypeProvider);
