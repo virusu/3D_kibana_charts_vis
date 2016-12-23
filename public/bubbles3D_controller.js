@@ -258,7 +258,7 @@ function init () {
    //////////////
    renderer = new THREE.WebGLRenderer( {antialias:true} );
    renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-   renderer.setClearColor( 0xd8d8d8 );
+   renderer.setClearColor( 0xffffff );
    container = idchart[0];
    container.appendChild(renderer.domElement);
 

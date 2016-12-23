@@ -186,7 +186,7 @@ function initpie () {
    //////////////
    rendererpie = new THREE.WebGLRenderer( {antialias:true} );
    rendererpie.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-   rendererpie.setClearColor( 0xd8d8d8 );
+   rendererpie.setClearColor( 0xffffff );
    containerpie = idchart[0];
    containerpie.appendChild(rendererpie.domElement);
 
