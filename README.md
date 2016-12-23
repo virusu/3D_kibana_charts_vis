@@ -1,6 +1,20 @@
-# TFG
+# 3D Visualizations for Kibana
 
-Installation steps:
+3D pie chart, bars chart and bubbles chart visualizations for Kibana 5.0.0.
+
+##3D Pie Chart
+
+![image](resources/onlypie3D.png)
+
+##3D Bars Chart
+
+![image](resources/onlybars3D.png)
+
+##3D Bubbles Chart (under development...)
+
+![image](resources/onlybubbles3D.png)
+
+##Installation steps:
 
 ```
 cd KIBANA_HOME/plugins
