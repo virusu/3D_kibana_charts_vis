@@ -1,8 +1,8 @@
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
-import barsVisTemplate from 'plugins/3D_kibana_charts_vis/bars3D_vis.html';
+import barsVisTemplate from 'plugins/3D_kibana_charts_vis/bars3D.html';
 
-import 'plugins/3D_kibana_charts_vis/bars3D_vis_controller';
+import 'plugins/3D_kibana_charts_vis/bars3D_controller';
 
 
 export default function bars3DVisProvider(Private) {
@@ -15,15 +15,6 @@ export default function bars3DVisProvider(Private) {
   		icon: 'fa-bar-chart',
   		description: 'A 3D bars chart. Great for representing 3D data',
   		template: barsVisTemplate,
-/*  		params: {
-  			defaults: {
-          		editorPanel: {},
-          		enableZoom: false,
-
-  			},
-            editor: vrVisParamsTemplate
-	    },   */  
-    // Define the aggregation your visualization accepts
     schemas: new Schemas([
         {
           group: 'metrics',
