@@ -28,16 +28,16 @@ export default function bubbles3DVisProvider(Private) {
         {
           group: 'metrics',
           name: 'bubbles_height_size',
-          title: 'Bubbles Height-Size',
-          min: 1,
-          max: 1,
+          title: 'Bubbles Height and Size',
+          min: 2,
+          max: 2,
           aggFilter: ['count', 'avg', 'sum', 'min', 'max', 'cardinality', 'std_dev']
         },
         {
           group: 'buckets',
           name: 'bubbles',
           title: 'Bubbles',
-          min: 1,
+          min: 2,
           max: 2,
           aggFilter: '!geohash_grid'
         }

@@ -1,18 +1,16 @@
 import uiModules from 'ui/modules';
 import errors from 'ui/errors';	
-(function () {
+
+import moment from 'moment';
+
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
 // didn't already
 const module = uiModules.get('kibana/vr_vis', ['kibana']);
 
-module.controller('BubblesController', function($scope, $element, Private){
-
-  console.log(THREEx.DomEvents);
+module.controller('BubblesController', function($scope, $rootScope, $element, Private){
 
 var filterManager = Private(require('ui/filter_manager'));
 
-
-// standard global variables
 var dash, container, scene, camera, renderer, controls;
 
 
@@ -26,8 +24,6 @@ $scope.bubbles=[];
 
     if ($scope.bubbleschart){
       $scope.bubbles = [];
-/*      $scope.barschart.remove();
-      console.log("barschart removed");*/
     }
     //if bars aggregation exists, that is, user has configured it
     if ($scope.vis.aggs.bySchemaName['bubbles']) {
@@ -51,24 +47,37 @@ $scope.bubbles=[];
     console.log(resp.aggregations);
 
     $scope.bubbles = [];
+
+
     // Transform all buckets into tag objects
     bucketsx.map(function(bucketx) {
-      // Use the getValue function of the aggregation to get the value of a bucket
-
 
       var bucketsy = bucketx[barsyAggId].buckets;
 
-    bucketsy.map(function(buckety){
+      bucketsy.map(function(buckety){
 
       var value = metricsAgg1.getValue(buckety);
-      $scope.bubbles.push({key1:bucketx.key, key2:buckety.key, value: value});
+      var value2 = metricsAgg2.getValue(buckety);
 
+
+      if($scope.vis.aggs.bySchemaName['bubbles'][0]._opts.type.includes("date")){
+
+        $scope.bubbles.push({key1:bucketx.key_as_string, key2:buckety.key, value: value, value2: value2});
+      } else {
+
+        if($scope.vis.aggs.bySchemaName['bubbles'][1]._opts.type.includes("date")){
+
+          $scope.bubbles.push({key1:bucketx.key, key2:buckety.key_as_string, value: value, value2: value2});
+
+        } else {
+
+        $scope.bubbles.push({key1:bucketx.key, key2:buckety.key, value: value, value2: value2});
+        }
+      }
      })
     });
-    console.log($scope.bubbles);
-    //$scope.bars = $scope.bars.concat(getMissingGaps($scope.bars));
+
     $scope.bubbles = getOrderedData($scope.bubbles);
-    console.log($scope.bubbles);
 
 
   var data2= [{key1:'january',key2:'apple',value:23,value2:Math.random()*50},{key1:'february',key2:'apple',value:31,value2:Math.random()*50},{key1:'march',key2:'apple',value:10,value2:Math.random()*50},{key1:'april',key2:'apple',value:59,value2:Math.random()*50},
@@ -80,16 +89,6 @@ $scope.bubbles=[];
  
   ];
 
-//some test data
-/*  var data= [{key1:'january',key2:'apple',value:23},{key1:'february',key2:'apple',value:31},{key1:'march',key2:'apple',value:10},{key1:'april',key2:'apple',value:59},
-
-            {key1:'january',key2:'google',value:34},{key1:'february',key2:'google',value:89},{key1:'march',key2:'google',value:53},{key1:'april',key2:'google',value:76},
-
-            {key1:'january',key2:'microsoft',value:10},{key1:'february',key2:'microsoft',value:5},{key1:'march',key2:'microsoft',value:4},{key1:'april',key2:'microsoft',value:12},
-
-            {key1:'january',key2:'sony',value:56},{key1:'february',key2:'sony',value:21},{key1:'march',key2:'sony',value:23},{key1:'april',key2:'sony',value:12}
-  ];*/
-
       if ($scope.bubbleschart){
         $scope.bubbleschart.data($scope.bubbles);
         if ($scope.bubbles.length > 0){
@@ -98,7 +97,8 @@ $scope.bubbles=[];
 
       } else {
         $scope.bubbleschart = dash.bubbleChart([0,0,0]);
-        $scope.bubbleschart.data(data2)
+        $scope.bubbleschart.data($scope.bubbles)
+         .addCustomEvents(filter)
          .width(500)
          .height(400)
          .gridsOn()
@@ -109,6 +109,17 @@ $scope.bubbles=[];
   }
 
   });
+
+
+
+init();
+
+// animation loop / game loop
+animate();
+
+///////////////
+// FUNCTIONS //
+///////////////
 
 var getKeysOne=function(datos) {
   var keysOne=[];
@@ -165,7 +176,7 @@ var getOrderedData = function (datos){
   for (var j = 0; j < keysOne.length; j++){
     for (var k = 0; k < keysTwo.length; k++){
         if (!additionalStructure[j][k]){
-          additionalStructure[j][k] = {key1: keysOne[j], key2: keysTwo[k], value: 0};
+          additionalStructure[j][k] = {key1: keysOne[j], key2: keysTwo[k], value: 0, value2: 0};
           //missingGaps.push({key1: keysOne[j], key2: keysTwo[k], value: 0})
         }
       }
@@ -182,29 +193,64 @@ var getOrderedData = function (datos){
  var filter = function(mesh) {
     dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
     console.log(mesh.data.key1);
+
+    //if first buckets are date
+    if($scope.vis.aggs.bySchemaName['bubbles'][0]._opts.type.includes("date")){
+
+
+    var from = moment(mesh.data.key1);
+    var interval = moment($scope.bubbles[1].key1) - moment($scope.bubbles[0].key1);
+    var to = moment(from).add('ms', interval);
+
+    $rootScope.$$timefilter.time.from = from;
+    $rootScope.$$timefilter.time.to = to;
+    $rootScope.$$timefilter.time.mode = 'absolute';
+
+    } else {
     filterManager.add(
       // The field to filter for, we can get it from the config
       $scope.vis.aggs.bySchemaName['bubbles'][0].params.field,
       // The value to filter for, we will read out the bucket key
-      //$scope.bars[0].key,
+      //$scope.bubbles[0].key,
       mesh.data.key1,
       // Whether the filter is negated. If you want to create a negated filter pass '-' here
       null,
       // The index pattern for the filter
       $scope.vis.indexPattern.title
     );
+    }
 
+
+    //if second buckets are date
+    if($scope.vis.aggs.bySchemaName['bubbles'][1]._opts.type.includes("date")){
+
+    var from = moment(mesh.data.key2);
+
+    var i = 0;
+    while ($scope.bubbles[i].key2 == $scope.bubbles[i+1].key2){
+      i++;
+    }
+
+    var interval = moment($scope.bubbles[i+1].key2) - moment($scope.bubbles[i].key2);
+    var to = moment(from).add('ms', interval);
+
+    $rootScope.$$timefilter.time.from = from;
+    $rootScope.$$timefilter.time.to = to;
+    $rootScope.$$timefilter.time.mode = 'absolute';
+
+    } else {
         filterManager.add(
       // The field to filter for, we can get it from the config
       $scope.vis.aggs.bySchemaName['bubbles'][1].params.field,
       // The value to filter for, we will read out the bucket key
-      //$scope.bars[0].key,
+      //$scope.bubbles[0].key,
       mesh.data.key2,
       // Whether the filter is negated. If you want to create a negated filter pass '-' here
       null,
       // The index pattern for the filter
       $scope.vis.indexPattern.title
     );
+    }
 
   });
   };
@@ -215,14 +261,6 @@ var getOrderedData = function (datos){
       console.log(mesh.data.key1);
       });
  }
-
-      init();
-      // animation loop / game loop
-      animate();
-
-///////////////
-// FUNCTIONS //
-///////////////
 
 function init () {
 
@@ -299,5 +337,3 @@ function update()
 }
 
 });
-}());
-

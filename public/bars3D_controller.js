@@ -296,10 +296,6 @@ function init () {
    scene.add(light);
    var ambientLight = new THREE.AmbientLight(0x111111);
 
-
-  var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
-  var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
-
   //create new dash object containing all variables needed for the scene
   dash = THREEDC({},camera,scene,renderer, container);
 
