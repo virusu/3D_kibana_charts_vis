@@ -1,22 +1,18 @@
 import uiModules from 'ui/modules';
 import errors from 'ui/errors';	
 import moment from 'moment';
-import 'ui/timepicker/quick_ranges';
-import 'ui/timepicker/time_units';
 
-(function () {
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
 // didn't already
 const module = uiModules.get('kibana/vr_vis', ['kibana']);
 /*  const ElementQueries = require('css-element-queries/src/ElementQueries');
   const ResizeSensor = require('css-element-queries/src/ResizeSensor');*/
 
-module.controller('PieController', function(quickRanges, timeUnits, $scope, $rootScope, $element, Private, $filter, $timeout){
+module.controller('PieController', function($scope, $rootScope, $element, Private, $filter){
 
 console.log($scope);
 var filterManager = Private(require('ui/filter_manager'));
 
-// standard global variables
 var dash, containerpie, scenepie, camerapie, rendererpie;
 
 $scope.pie = null;
@@ -54,10 +50,10 @@ $scope.slices=[];
         // Use the getValue function of the aggregation to get the value of a bucket
         var value = metricsAgg.getValue(bucket);
 
+        //if field we are representing is a date field
         if($scope.vis.aggs[1]._opts.type.includes("date")){
 
         return {
-          //key: moment(bucket.key_as_string).format('YYYY/MM/DD hh:mm'),
           key: bucket.key_as_string,
           value: value
           };
@@ -78,18 +74,12 @@ $scope.slices=[];
         console.log($scope.timefilter);
         $scope.pie.reBuild();
       } else {
+
       //redibujar pie con los nuevos datos
       $scope.pie = dash.pieChart();
-         $scope.pie
-      //  .dimension(dimByOrg)
-      //  .group(groupByOrg)
-        //.width(200)
+      $scope.pie
         .data($scope.slices)
         .addCustomEvents(filter)
-       // .numberOfXLabels(50)
-        //.numberOfYLabels(5)
-        //.gridsOn()
-        //.height(200)
         .radius(50)
         .color(0xffaa00);
 
@@ -107,53 +97,49 @@ $scope.slices=[];
 
   });
 
-  var testFunction = function (mesh) {
-      dash.domEvents.bind(mesh, 'mouseover', function(object3d){ 
-        console.log(mesh.data.key);
-      });
- }
 
-
- var filter = function(mesh) {
-    dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
-
-
-    if ($scope.vis.aggs[1]._opts.type.includes("date")){
-
-      var from = moment(mesh.data.key);
-      var interval = moment($scope.slices[1].key) - moment($scope.slices[0].key);
-      var to = moment(from).add('ms', interval);
-
-      $rootScope.$$timefilter.time.from = from;
-      $rootScope.$$timefilter.time.to = to;
-      $rootScope.$$timefilter.time.mode = 'absolute';
-
-    } else {
-    filterManager.add(
-      // The field to filter for, we can get it from the config
-      $scope.vis.aggs.bySchemaName['slices'][0].params.field,
-      // The value to filter for, we will read out the bucket key
-      //$scope.slices[0].key,
-      mesh.data.key,
-      // Whether the filter is negated. If you want to create a negated filter pass '-' here
-      null,
-      // The index pattern for the filter
-      $scope.vis.indexPattern.title
-    );
-  }
-  });
-  };
-
-      initpie();
-      // animation loop / game loop
-      animatepie();
+initpie();
+// animation loop / game loop
+animatepie();
 
 ///////////////
 // FUNCTIONS //
 ///////////////
 
-function initpie () {
+//add Kibana filters when clicking on a slice
+var filter = function(mesh) {
 
+  dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
+
+  //if field I clicked on is a date filed
+  if ($scope.vis.aggs[1]._opts.type.includes("date")){
+    
+    var from = moment(mesh.data.key);
+    var interval = moment($scope.slices[1].key) - moment($scope.slices[0].key);
+    var to = moment(from).add('ms', interval);
+
+    $rootScope.$$timefilter.time.from = from;
+    $rootScope.$$timefilter.time.to = to;
+    $rootScope.$$timefilter.time.mode = 'absolute';
+
+  } else {
+    filterManager.add(
+    // The field to filter for, we can get it from the config
+    $scope.vis.aggs.bySchemaName['slices'][0].params.field,
+    // The value to filter for, we will read out the bucket key
+    //$scope.slices[0].key,
+    mesh.data.key,
+    // Whether the filter is negated. If you want to create a negated filter pass '-' here
+    null,
+    // The index pattern for the filter
+    $scope.vis.indexPattern.title
+    );
+  }
+  });
+  };
+
+
+function initpie () {
 
    var idchart = $element.children().find(".chartpie");
    ///////////
@@ -203,8 +189,8 @@ function initpie () {
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
+  //create new dash object containing all variables needed for the scene
   dash = THREEDC({}, camerapie,scenepie,rendererpie, containerpie);
-
 
 }
 
@@ -222,11 +208,7 @@ function renderpie()
 
 function updatepie()
 {
-  //#TODO: fix controls
   dash.controls.update();
 }
 
 });
-
-
-}());
