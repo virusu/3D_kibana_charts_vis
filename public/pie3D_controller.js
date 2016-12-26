@@ -8,7 +8,7 @@ const module = uiModules.get('kibana/vr_vis', ['kibana']);
 /*  const ElementQueries = require('css-element-queries/src/ElementQueries');
   const ResizeSensor = require('css-element-queries/src/ResizeSensor');*/
 
-module.controller('PieController', function($scope, $rootScope, $element, Private, $filter){
+module.controller('PieController', function($scope, $rootScope, $element, Private){
 
 console.log($scope);
 var filterManager = Private(require('ui/filter_manager'));
@@ -51,7 +51,7 @@ $scope.slices=[];
         var value = metricsAgg.getValue(bucket);
 
         //if field we are representing is a date field
-        if($scope.vis.aggs[1]._opts.type.includes("date")){
+        if($scope.vis.aggs.bySchemaName['slices'][0]._opts.type.includes("date")){
 
         return {
           key: bucket.key_as_string,
@@ -112,7 +112,7 @@ var filter = function(mesh) {
   dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
 
   //if field I clicked on is a date filed
-  if ($scope.vis.aggs[1]._opts.type.includes("date")){
+  if ($scope.vis.aggs.bySchemaName['slices'][0]._opts.type.includes("date")){
     
     var from = moment(mesh.data.key);
     var interval = moment($scope.slices[1].key) - moment($scope.slices[0].key);

@@ -1,27 +1,22 @@
 import uiModules from 'ui/modules';
-import errors from 'ui/errors';	
-(function () {
+import errors from 'ui/errors';
+import moment from 'moment';
+
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
 // didn't already
 const module = uiModules.get('kibana/vr_vis', ['kibana']);
 
-
-
-module.controller('BarsController', function($scope, $element, Private){
-
-  console.log(THREEx.DomEvents);
+module.controller('BarsController', function($scope, $rootScope, $element, Private){
 
 var filterManager = Private(require('ui/filter_manager'));
 
-
-
-// standard global variables
 var dash, container, scene, camera, renderer, controls;
 
 
 $scope.barschart = null;
 $scope.bars=[];
   $scope.$watch('esResponse', function(resp) {
+
     if (!resp) {
       $scope.bars = [];
       return;
@@ -29,8 +24,6 @@ $scope.bars=[];
 
     if ($scope.barschart){
       $scope.bars = [];
-/*      $scope.barschart.remove();
-      console.log("barschart removed");*/
     }
     //if bars aggregation exists, that is, user has configured it
     if ($scope.vis.aggs.bySchemaName['bars']) {
@@ -42,45 +35,41 @@ $scope.bars=[];
     // Retrieve the metrics aggregation configured
     var metricsAgg = $scope.vis.aggs.bySchemaName['bars_height'][0];
     console.log(metricsAgg);
+
     // Get the buckets of that aggregation
-
     var bucketsx = resp.aggregations[barsxAggId].buckets;
-    //var bucketsy = resp.aggregations[barsyAggId].buckets;
-
-    console.log(bucketsx);
-    console.log($scope.vis.aggs.bySchemaName);
-    console.log(resp.aggregations);
 
     $scope.bars = [];
+
     // Transform all buckets into tag objects
     bucketsx.map(function(bucketx) {
-      // Use the getValue function of the aggregation to get the value of a bucket
-
 
       var bucketsy = bucketx[barsyAggId].buckets;
 
-    bucketsy.map(function(buckety){
+      bucketsy.map(function(buckety){
 
       var value = metricsAgg.getValue(buckety);
-      $scope.bars.push({key1:bucketx.key, key2:buckety.key, value: value});
 
+
+      if($scope.vis.aggs.bySchemaName['bars'][0]._opts.type.includes("date")){
+
+        $scope.bars.push({key1:bucketx.key_as_string, key2:buckety.key, value: value});
+      } else {
+
+        if($scope.vis.aggs.bySchemaName['bars'][1]._opts.type.includes("date")){
+
+          $scope.bars.push({key1:bucketx.key, key2:buckety.key_as_string, value: value});
+
+        } else {
+
+      $scope.bars.push({key1:bucketx.key, key2:buckety.key, value: value});
+        }
+      }
      })
     });
-    console.log($scope.bars);
-    //$scope.bars = $scope.bars.concat(getMissingGaps($scope.bars));
+
+
     $scope.bars = getOrderedData($scope.bars);
-    console.log($scope.bars);
-
-
-//some test data
-/*  var data= [{key1:'january',key2:'apple',value:23},{key1:'february',key2:'apple',value:31},{key1:'march',key2:'apple',value:10},{key1:'april',key2:'apple',value:59},
-
-            {key1:'january',key2:'google',value:34},{key1:'february',key2:'google',value:89},{key1:'march',key2:'google',value:53},{key1:'april',key2:'google',value:76},
-
-            {key1:'january',key2:'microsoft',value:10},{key1:'february',key2:'microsoft',value:5},{key1:'march',key2:'microsoft',value:4},{key1:'april',key2:'microsoft',value:12},
-
-            {key1:'january',key2:'sony',value:56},{key1:'february',key2:'sony',value:21},{key1:'march',key2:'sony',value:23},{key1:'april',key2:'sony',value:12}
-  ];*/
 
       if ($scope.barschart){
         $scope.barschart.data($scope.bars);
@@ -106,6 +95,17 @@ $scope.bars=[];
   }
 
   });
+
+
+
+init();
+
+// animation loop / game loop
+animate();
+
+///////////////
+// FUNCTIONS //
+///////////////
 
 var getKeysOne=function(datos) {
   var keysOne=[];
@@ -179,6 +179,20 @@ var getOrderedData = function (datos){
  var filter = function(mesh) {
     dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
     console.log(mesh.data.key1);
+
+    //if first buckets are date
+    if($scope.vis.aggs.bySchemaName['bars'][0]._opts.type.includes("date")){
+
+
+    var from = moment(mesh.data.key1);
+    var interval = moment($scope.bars[1].key1) - moment($scope.bars[0].key1);
+    var to = moment(from).add('ms', interval);
+
+    $rootScope.$$timefilter.time.from = from;
+    $rootScope.$$timefilter.time.to = to;
+    $rootScope.$$timefilter.time.mode = 'absolute';
+
+    } else {
     filterManager.add(
       // The field to filter for, we can get it from the config
       $scope.vis.aggs.bySchemaName['bars'][0].params.field,
@@ -190,7 +204,27 @@ var getOrderedData = function (datos){
       // The index pattern for the filter
       $scope.vis.indexPattern.title
     );
+    }
 
+
+    //if second buckets are date
+    if($scope.vis.aggs.bySchemaName['bars'][1]._opts.type.includes("date")){
+
+    var from = moment(mesh.data.key2);
+
+    var i = 0;
+    while ($scope.bars[i].key2 == $scope.bars[i+1].key2){
+      i++;
+    }
+
+    var interval = moment($scope.bars[i+1].key2) - moment($scope.bars[i].key2);
+    var to = moment(from).add('ms', interval);
+
+    $rootScope.$$timefilter.time.from = from;
+    $rootScope.$$timefilter.time.to = to;
+    $rootScope.$$timefilter.time.mode = 'absolute';
+
+    } else {
         filterManager.add(
       // The field to filter for, we can get it from the config
       $scope.vis.aggs.bySchemaName['bars'][1].params.field,
@@ -202,6 +236,7 @@ var getOrderedData = function (datos){
       // The index pattern for the filter
       $scope.vis.indexPattern.title
     );
+    }
 
   });
   };
@@ -213,13 +248,6 @@ var getOrderedData = function (datos){
       });
  }
 
-      init();
-      // animation loop / game loop
-      animate();
-
-///////////////
-// FUNCTIONS //
-///////////////
 
 function init () {
 
@@ -272,6 +300,7 @@ function init () {
   var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
   var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
+  //create new dash object containing all variables needed for the scene
   dash = THREEDC({},camera,scene,renderer, container);
 
 }
@@ -290,10 +319,8 @@ function render()
 
 function update()
 {
-  //#TODO: fix controls
   dash.controls.update();
 }
 
 });
-}());
 
