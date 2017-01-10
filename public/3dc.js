@@ -41,10 +41,10 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 
 	var folder1 = THREEDC.gui.addFolder('Drag');
 	var activateDrag = folder1.add( THREEDC.parameters, 'activate' ).name('On/Off').listen();
-	activateDrag.onChange(function(value) 
+	activateDrag.onChange(function(value)
 	{ THREEDC.dragTrigger(); });
 	var dragChange = folder1.add( THREEDC.parameters, 'plane', [ "XZ", "XY" ] ).name('Plane').listen();
-	dragChange.onChange(function(value) 
+	dragChange.onChange(function(value)
 	{   THREEDC.changePlane();   });
 	folder1.close();
 	THREEDC.gui.close();
@@ -142,7 +142,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	  console.log(THREEDC.scene);
 	  THREEDC.scene.add(panel);
 
-		THREEDC.domEvents.bind(panel, 'mousedown', function(object3d){ 
+		THREEDC.domEvents.bind(panel, 'mousedown', function(object3d){
 			if(THREEDC.parameters.activate){
 				THREEDC.container.style.cursor = 'move';
 				THREEDC.controls.enabled=false;
@@ -157,7 +157,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			}
 		});
 
-		THREEDC.domEvents.bind(panel, 'mouseup', function(object3d){ 
+		THREEDC.domEvents.bind(panel, 'mouseup', function(object3d){
 	      if(THREEDC.chartToDrag){
 	        THREEDC.controls.enabled=true;
 	        THREEDC.container.style.cursor = 'auto';
@@ -190,10 +190,10 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	THREEDC.removeEvents=function(){
 		for (var i = 0; i < THREEDC.allCharts.length; i++) {
 			THREEDC.allCharts[i].removeEvents();
-		};	
+		};
 	}
 
-	//The spherical coordinates of a point in the ISO convention (radius r, inclination θ, azimuth φ) can be obtained from its Cartesian coordinates (x, y, z) 
+	//The spherical coordinates of a point in the ISO convention (radius r, inclination θ, azimuth φ) can be obtained from its Cartesian coordinates (x, y, z)
 	THREEDC.cartesianToSpherical=function (x,y,z) {
 		var r=Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2)) ;
 		var θ=Math.acos(z/r);
@@ -259,7 +259,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	     	_chart.removeGrids();
 	    	for (var i = 0; i < _chart.parts.length; i++) {
 	    		THREEDC.scene.remove(_chart.parts[i]);
-	    	}; 
+	    	};
 	    	_chart.parts=[];
 	    	if(_chart.panel){
 				for (var i = 0; i < _chart.panel.anchorPoints.length; i++) {
@@ -292,12 +292,12 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 
 	    	function addInfoEvents (mesh) {
 				//adds mouseover events
-				THREEDC.domEvents.bind(mesh, 'mouseover', function(object3d){ 
+				THREEDC.domEvents.bind(mesh, 'mouseover', function(object3d){
 					changeMeshColor(mesh);
 					showInfo(mesh);
 				});
 
-				THREEDC.domEvents.bind(mesh, 'mouseout', function(object3d){ 
+				THREEDC.domEvents.bind(mesh, 'mouseout', function(object3d){
 					//restores the original color
 					if(mesh.type!='Line'){
 						mesh.material.emissive.setHex(mesh.currentHex);
@@ -308,23 +308,23 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			function addEvents (mesh) {
 
 				//adds mouseover events
-				THREEDC.domEvents.bind(mesh, 'mouseover', function(object3d){ 
+				THREEDC.domEvents.bind(mesh, 'mouseover', function(object3d){
 					changeMeshColor(mesh);
 					showInfo(mesh);
 				});
 
-				THREEDC.domEvents.bind(mesh, 'mouseout', function(object3d){ 
+				THREEDC.domEvents.bind(mesh, 'mouseout', function(object3d){
 					//restores the original color
 					if(mesh.type!='Line'){
 						mesh.material.emissive.setHex(mesh.currentHex);
 					}
 				});
 
-				//THREEDC.domEvents.bind(mesh, 'click', function(object3d){ 
+				//THREEDC.domEvents.bind(mesh, 'click', function(object3d){
 				//	addFilter(mesh);
 				//});
 
-				THREEDC.domEvents.bind(mesh, 'mousedown', function(object3d){ 
+				THREEDC.domEvents.bind(mesh, 'mousedown', function(object3d){
 					if(THREEDC.parameters.activate){
 						THREEDC.container.style.cursor = 'move';
 						THREEDC.controls.enabled=false;
@@ -343,7 +343,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 					}
 				});
 
-				THREEDC.domEvents.bind(mesh, 'mouseup', function(object3d){ 
+				THREEDC.domEvents.bind(mesh, 'mouseup', function(object3d){
 					if(!THREEDC.parameters.activate){
 						THREEDC.container.style.cursor = 'auto';
 						THREEDC.controls.enabled=true;
@@ -382,7 +382,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				for (var i = 0; i < THREEDC.allCharts.length; i++) {
 					THREEDC.allCharts[i].reBuild();
 				};
-			}		
+			}
 
 			//creates a 3D text label
 			function showInfo (mesh) {
@@ -392,8 +392,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			      var material = new THREE.MeshPhongMaterial( {color:mesh.origin_color,
 			      											   specular: 0x999999,
 	                                            	           shininess: 100,
-	                                            	           shading : THREE.SmoothShading			      											   
-			      } );			                    	      
+	                                            	           shading : THREE.SmoothShading
+			      } );
 			      var geometry = new THREE.TextGeometry( txt, {
 			        size: 8,
 			        height: 2,
@@ -527,8 +527,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	    	_chart.yGrids=[];
 	    }
 
-	    
-	    _chart.addLabels=function(){ 
+
+	    _chart.addLabels=function(){
 	    	var numberOfValues;
 	    	var topYValue;
 
@@ -567,10 +567,10 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	    		putXLabel(i*stepX,i*stepXValue);
 	    	};
 	    	*/
-	    	
+
 	    	_chart.renderLabels();
 
-		    /* gets the max width of an axis label to calculate the separation 
+		    /* gets the max width of an axis label to calculate the separation
 	   		*  between the chart border and the label
 			*/
 	    	function getMaxWidth (axis) {
@@ -579,8 +579,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				var material = new THREE.MeshPhongMaterial( {color:0x000000,
 															   specular: 0x999999,
 				                            	           shininess: 100,
-				                            	           shading : THREE.SmoothShading			      											   
-				} );			                    	      
+				                            	           shading : THREE.SmoothShading
+				} );
 				var geometry = new THREE.TextGeometry( txt, {
 				size: 4,
 				height: 2,
@@ -601,8 +601,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				var material = new THREE.MeshPhongMaterial( {color:0x000000,
 															   specular: 0x999999,
 				                            	           shininess: 100,
-				                            	           shading : THREE.SmoothShading			      											   
-				} );			                    	      
+				                            	           shading : THREE.SmoothShading
+				} );
 				var geometry = new THREE.TextGeometry( txt, {
 				size: 4,
 				height: 2,
@@ -624,8 +624,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			      var material = new THREE.MeshPhongMaterial( {color:0x000000,
 			      											   specular: 0x999999,
 	                                            	           shininess: 100,
-	                                            	           shading : THREE.SmoothShading			      											   
-			      } );			                    	      
+	                                            	           shading : THREE.SmoothShading
+			      } );
 			      var geometry = new THREE.TextGeometry( txt, {
 			        size: _chart._height/30,
 			        height: 2,
@@ -651,8 +651,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			      var material = new THREE.MeshPhongMaterial( {color:0x000000,
 			      											   specular: 0x999999,
 	                                            	           shininess: 100,
-	                                            	           shading : THREE.SmoothShading			      											   
-			      } );			                    	      
+	                                            	           shading : THREE.SmoothShading
+			      } );
 			      var geometry = new THREE.TextGeometry( txt, {
 			        size: _chart._height/30,
 			        height: 2,
@@ -723,7 +723,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			//ordeno fechas(keys) de menor a mayor
 			dates.sort(function(a, b){return a-b});
 
-		    //ordeno el grupo de menor a mayor usando 
+		    //ordeno el grupo de menor a mayor usando
 		    //las posiciones de dates
 			var _data=[];
 			for (var i = 0; i < dates.length; i++) {
@@ -906,7 +906,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 		 	 	for (var i = 0; i <_chart._numberOfYLabels+1; i++) {
 		    		putYGrid(i*stepY);
 		    	};
-		    	
+
 		    	var stepX = _chart._width/numberOfKeys1;
 
 	    	 	for (var i = 0; i <numberOfKeys1+1; i++) {
@@ -1056,7 +1056,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				boxYZ.position.set(_chart.coords.x+_chart._width,_chart.coords.y+_chart._height/2,_chart.coords.z+_chart._depth/2);
 				//scene.add(boxYZ);
 				_chart.xGrids.push(boxYZ);
-				
+
 				var boxXZ=new THREE.Mesh(geometryXZ, material);
 				boxXZ.position.set(_chart.coords.x+_chart._width/2,_chart.coords.y,_chart.coords.z+_chart._depth/2);
 				boxXZ.rotation.x = Math.PI / 2; //XZ plane
@@ -1088,7 +1088,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	    	_chart.yGrids=[];
 	    }
 
-	    _chart.addLabels=function(){ 
+	    _chart.addLabels=function(){
 	    	var numberOfValues;
 	    	var topYValue;
 	    	var keysOne=_chart.getKeysOne();
@@ -1127,8 +1127,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				      var material = new THREE.MeshPhongMaterial( {color:0x000000,
 				      											   specular: 0x999999,
 		                                            	           shininess: 100,
-		                                            	           shading : THREE.SmoothShading			      											   
-				      } );			                    	      
+		                                            	           shading : THREE.SmoothShading
+				      } );
 				      var geometry = new THREE.TextGeometry( txt, {
 				        size: _chart._height/30,
 				        height: 2,
@@ -1167,8 +1167,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				      var material = new THREE.MeshPhongMaterial( {color:0x000000,
 				      											   specular: 0x999999,
 		                                            	           shininess: 100,
-		                                            	           shading : THREE.SmoothShading			      											   
-				      } );			                    	      
+		                                            	           shading : THREE.SmoothShading
+				      } );
 				      var geometry = new THREE.TextGeometry( txt, {
 				        size: _chart._depth/30,
 				        height: 2,
@@ -1207,8 +1207,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				      var material = new THREE.MeshPhongMaterial( {color:0x000000,
 				      											   specular: 0x999999,
 		                                            	           shininess: 100,
-		                                            	           shading : THREE.SmoothShading			      											   
-				      } );			                    	      
+		                                            	           shading : THREE.SmoothShading
+				      } );
 				      var geometry = new THREE.TextGeometry( txt, {
 				        size: _chart._depth/30,
 				        height: 2,
@@ -1244,7 +1244,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	    	*/
 
 
-		    /* gets the max width of an axis label to calculate the separation 
+		    /* gets the max width of an axis label to calculate the separation
 	   		*  between the chart border and the label
 			*/
 	    	function getMaxWidth (axis) {
@@ -1253,8 +1253,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				var material = new THREE.MeshPhongMaterial( {color:0x000000,
 															   specular: 0x999999,
 				                            	           shininess: 100,
-				                            	           shading : THREE.SmoothShading			      											   
-				} );			                    	      
+				                            	           shading : THREE.SmoothShading
+				} );
 				var geometry = new THREE.TextGeometry( txt, {
 				size: 4,
 				height: 2,
@@ -1275,8 +1275,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				var material = new THREE.MeshPhongMaterial( {color:0x000000,
 															   specular: 0x999999,
 				                            	           shininess: 100,
-				                            	           shading : THREE.SmoothShading			      											   
-				} );			                    	      
+				                            	           shading : THREE.SmoothShading
+				} );
 				var geometry = new THREE.TextGeometry( txt, {
 				size: 4,
 				height: 2,
@@ -1299,8 +1299,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			      var material = new THREE.MeshPhongMaterial( {color:0x000000,
 			      											   specular: 0x999999,
 	                                            	           shininess: 100,
-	                                            	           shading : THREE.SmoothShading			      											   
-			      } );			                    	      
+	                                            	           shading : THREE.SmoothShading
+			      } );
 			      var geometry = new THREE.TextGeometry( txt, {
 			        size: _chart._height/30,
 			        height: 2,
@@ -1343,7 +1343,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	   }
 		//by default
 		var _radius=50;
-		
+
 		var _chart = THREEDC.baseMixin({});
 		_chart._width=_radius;
 		_chart._height=_radius;
@@ -1417,7 +1417,14 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	   	   		 _data=_chart._data;
 	   	   }
 
-			var  extrudeOpts = {curveSegments:30,
+	   	   var curveSegments;
+	   	   if (_chart._data.length===1) {
+	   	   		curveSegments=600;
+	   	   }else{
+	   	   		curveSegments=30;
+	   	   };
+
+			var  extrudeOpts = {curveSegments:curveSegments,
 								amount: _chart._depth,
 								bevelEnabled: true,
 								bevelSegments: 4,
@@ -1442,7 +1449,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	                                            	        shading : THREE.SmoothShading,
 	                                               	 		opacity:_chart._opacity,
 	                                           				transparent: true
-	            } );				
+	            } );
 	             // Creats the shape, based on the value and the _radius
 				var shape = new THREE.Shape();
 				var angToMove = (Math.PI*2*(_data[i].value/valTotal));
@@ -1485,7 +1492,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			//by default
 		_chart._depth=5;
 		_chart._opacity=0.8;
-		
+
 		if(location.isPanel){
 			for (var i = 0; i < location.anchorPoints.length; i++) {
 				if(!location.anchorPoints[i].filled){
@@ -1530,7 +1537,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	   	   		 _data=_chart._data;
 	   	   }
 
-		 
+
 		   var barWidth=_chart._width/numberOfValues;
 
 		   var y;
@@ -1566,7 +1573,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 		    _chart.addLabels();
 			if (_chart._gridsOn) _chart.addGrids();
 	    }
-	   
+
 	    return _chart;
 	}
 
@@ -1689,13 +1696,13 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 
 		particleGroup = new THREE.Object3D();
 		particleAttributes = { startSize: [], startPosition: [], randomness: [] };
-		
+
 		var totalParticles = 200;
 		var radiusRange = 10;
-		for( var i = 0; i < _chart._points.length; i++ ) 
+		for( var i = 0; i < _chart._points.length; i++ )
 		{
 		    var spriteMaterial = new THREE.SpriteMaterial( { map: particleTexture, color: 0xffffff } );
-			
+
 			var sprite = new THREE.Sprite( spriteMaterial );
 			sprite.scale.set( 3, 3, 1.0 ); // imageWidth, imageHeight
 			sprite.position.set( _chart._points[i].x, _chart._points[i].y, _chart._points[i].z );
@@ -1706,13 +1713,13 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			// sprite.position.setLength( radiusRange * Math.random() );
 			// for a spherical shell:
 			//sprite.position.setLength( radiusRange * (Math.random() * 0.1 + 0.9) );
-			
-			// sprite.color.setRGB( Math.random(),  Math.random(),  Math.random() ); 
-			sprite.material.color.setHSL( Math.random(), 0.9, 0.7 ); 
-			
+
+			// sprite.color.setRGB( Math.random(),  Math.random(),  Math.random() );
+			sprite.material.color.setHSL( Math.random(), 0.9, 0.7 );
+
 			// sprite.opacity = 0.80; // translucent particles
 			sprite.material.blending = THREE.AdditiveBlending; // "glowing" particles
-			THREEDC.domEvents.bind(sprite, 'mouseover', function(object3d){ 
+			THREEDC.domEvents.bind(sprite, 'mouseover', function(object3d){
 				console.log(sprite.coordis);
 			});
 			//particleGroup.add( sprite );
@@ -1724,8 +1731,8 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 		//particleGroup.position.y = 50;
 
 
-	    }    
-	   
+	    }
+
 	    return _chart;
 	}
 
@@ -1738,7 +1745,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 		THREEDC.allCharts.push(_chart);
 
 		_chart.build = function() {
-		   	
+
 		   if(_chart._group===undefined){
 		   	console.log('You must define a group for this chart');
 		   	return;
@@ -1884,7 +1891,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 			_chart.addEvents();
 			_chart.addLabels();
 			if (_chart._gridsOn) _chart.addGrids();
-		    
+
 
 	    }
 
@@ -2023,7 +2030,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 
 		   var numberOfKeys1=_chart.getKeysOne();
 		   var numberOfKeys2=_chart.getKeysTwo();
-		   
+
 		   var dataPos=0;
 		   var stepX=0;
 	   	   var y=0;
@@ -2032,27 +2039,30 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 		   		stepX =_chart._width/numberOfKeys1.length/2;
 		   		var origin_color =Math.random() * 0xffffff;
 		   		for (var j = 0; j < numberOfKeys1.length; j++) {
-					var geometry = new THREE.SphereGeometry(topBubbleRadius*_chart._data[dataPos].value2/topValue2,32,32);
-		   		    var material = new THREE.MeshPhongMaterial( {color: origin_color,
-		                                                	     specular: 0x999999,
-		                                                	     shininess: 100,
-		                                                	     shading : THREE.SmoothShading,
-		                                                   	     opacity:_chart._opacity,
-		                                               		     transparent: true
-		            } );
-		            var bubble = new THREE.Mesh(geometry, material);
-		            bubble.origin_color=origin_color;
-		            y=(_chart._height*_chart._data[dataPos].value)/topValue;
-		            bubble.position.set(stepX+_chart.coords.x,y+_chart.coords.y,stepZ+_chart.coords.z);
-		            bubble.name = "key1:"+_chart._data[dataPos].key1+" key2:"+_chart._data[dataPos].key2+" value: "+_chart._data[dataPos].value+" value2: "+_chart._data[dataPos].value2;
-		            bubble.data={
-		            	key1:_chart._data[dataPos].key1,
-		            	key2:_chart._data[dataPos].key2,
-		            	value:_chart._data[dataPos].value,
-		            	value:_chart._data[dataPos].value2
-		            };
-		            bubble.parentChart=_chart;
-		            _chart.parts.push(bubble);
+		   			if (_chart._data[dataPos].value2!=0) {
+						var geometry = new THREE.SphereGeometry(topBubbleRadius*_chart._data[dataPos].value2/topValue2,32,32);
+			   		    var material = new THREE.MeshPhongMaterial( {color: origin_color,
+			                                                	     specular: 0x999999,
+			                                                	     shininess: 100,
+			                                                	     shading : THREE.SmoothShading,
+			                                                   	     opacity:_chart._opacity,
+			                                               		     transparent: true
+			            } );
+			            var bubble = new THREE.Mesh(geometry, material);
+			            bubble.origin_color=origin_color;
+			            y=(_chart._height*_chart._data[dataPos].value)/topValue;
+			            bubble.position.set(stepX+_chart.coords.x,y+_chart.coords.y,stepZ+_chart.coords.z);
+			            bubble.name = "key1:"+_chart._data[dataPos].key1+" key2:"+_chart._data[dataPos].key2+" value: "+_chart._data[dataPos].value+" value2: "+_chart._data[dataPos].value2;
+			            bubble.data={
+			            	key1:_chart._data[dataPos].key1,
+			            	key2:_chart._data[dataPos].key2,
+			            	value:_chart._data[dataPos].value,
+			            	value:_chart._data[dataPos].value2
+			            };
+			            bubble.parentChart=_chart;
+			            _chart.parts.push(bubble);
+		   			};
+
 		            stepX+=_chart._width/numberOfKeys1.length;
 		   			dataPos++;
 		   		};
@@ -2108,7 +2118,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				                                             shading : THREE.SmoothShading,
 				                                             transparent: true
 				} );
-				
+
 				var rootNode = new THREE.Mesh(geometry, material);
 				rootNode.position.set(_chart.coords.x,_chart.coords.y+ _chart.rootNode.size/2,_chart.coords.z);
 				_chart.rootNode.position=rootNode.position;
@@ -2120,7 +2130,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 				console.log(node);
 				for (var i = 0; i < node.sons.length; i++) {
 					var coords=THREEDC.sphericalToCartesian(radius,node.sons[i].anglePosition,0);
-					var geometry = new THREE.CubeGeometry( 20, node.sons[i].size, 20);
+					var geometry = new THREE.SphereGeometry( node.sons[i].size/10, 20, 20);
 
 					var material = new THREE.MeshPhongMaterial( {color: 0xff00ff,
 					                                             specular: 0x999999,
@@ -2129,7 +2139,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 					                                             transparent: true
 					} );
 					//console.log(node.sons[i]);
-					
+
 					var ChildNode = new THREE.Mesh(geometry, material);
 					ChildNode.position.set(_chart.coords.x+coords.x,_chart.coords.y+coords.y+node.sons[i].size/2,_chart.coords.z+coords.z);
 					node.sons[i].position=ChildNode.position;
@@ -2144,13 +2154,12 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 					});
 
 					lineGeometry.vertices.push(
-						new THREE.Vector3( ChildNode.position.x, 0, ChildNode.position.z ),
-						new THREE.Vector3( node.position.x, 0, node.position.z )
+						new THREE.Vector3( ChildNode.position.x, ChildNode.position.y, ChildNode.position.z ),
+						new THREE.Vector3( node.position.x, node.position.y, node.position.z )
 					);
 
 					var link = new THREE.Line( lineGeometry, material );
 
-					link.position.set(node.position.x,0,node.position.z);
 					group.add(link);
 
 				};
@@ -2184,7 +2193,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 					for (var i = 0; i < _chart._data.length; i++) {
 						if(_chart._data[i].parent===node.id){
 							node.sons.push(_chart._data[i]);
-						}	
+						}
 					};
 					//remove found sons
 					var index;
@@ -2196,7 +2205,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 					for (var i = 0; i < node.sons.length; i++) {
 						findSons(node.sons[i]);
 					};
-					
+
 				}
 
 				function assignAngles (node) {
@@ -2241,7 +2250,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	        THREEDC.chartToDrag=null;
 	        THREEDC.plane.material.visible=false;
 	      }
-	    });    
+	    });
 	    window.addEventListener( 'mousemove', THREEDC.onMouseMove, false );
 	  }else{
 	    window.removeEventListener( 'mousemove', THREEDC.onMouseMove, false );
@@ -2265,7 +2274,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 
 
 	  THREEDC.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	  THREEDC.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;   
+	  THREEDC.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
 	  THREEDC.raycaster.setFromCamera( THREEDC.mouse, THREEDC.camera );
 
@@ -2278,7 +2287,7 @@ function THREEDC (THREEDC,camera,scene,renderer,container) {
 	        THREEDC.SELECTED.coords.copy( THREEDC.SELECTED.position);
 	      }else{
 	        THREEDC.chartToDrag.coords.copy(intersects[ 0 ].point.sub( THREEDC.offset ));
-	        if(THREEDC.paint) THREEDC.chartToDrag.reBuild(); 
+	        if(THREEDC.paint) THREEDC.chartToDrag.reBuild();
 	        !THREEDC.paint;
 	      }
 	    }
