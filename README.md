@@ -10,7 +10,7 @@
 
 ![image](resources/onlybars3D.png)
 
-##3D Bubbles Chart (under development...)
+##3D Bubbles Chart
 
 ![image](resources/onlybubbles3D.png)
 
