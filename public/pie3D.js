@@ -14,14 +14,7 @@ export default function pieVisProvider(Private) {
   		icon: 'fa-pie-chart',
   		description: 'A cool 3D pie for your visualization',
   		template: pieVisTemplate,
-/*  		params: {
-  			defaults: {
-          		editorPanel: {},
-          		enableZoom: false,
 
-  			},
-            editor: vrVisParamsTemplate
-	    },   */  
     // Define the aggregation your visualization accepts
     schemas: new Schemas([
         {

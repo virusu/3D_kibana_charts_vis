@@ -9,13 +9,13 @@ const module = uiModules.get('kibana/vr_vis', ['kibana']);
 
 module.controller('BubblesController', function($scope, $rootScope, $element, Private){
 
-var filterManager = Private(require('ui/filter_manager'));
+  var filterManager = Private(require('ui/filter_manager'));
 
-var dash, container, scene, camera, renderer, controls;
+  var dash, container, scene, camera, renderer, controls;
 
 
-$scope.bubbleschart = null;
-$scope.bubbles=[];
+  $scope.bubbleschart = null;
+  $scope.bubbles=[];
   $scope.$watch('esResponse', function(resp) {
     if (!resp) {
       $scope.bubbles = [];
@@ -30,24 +30,14 @@ $scope.bubbles=[];
     // Retrieve the id of the configured tags aggregation
     var barsxAggId = $scope.vis.aggs.bySchemaName['bubbles'][0].id;
     var barsyAggId = $scope.vis.aggs.bySchemaName['bubbles'][1].id;
-    console.log(barsxAggId);
-    console.log(barsyAggId);
     // Retrieve the metrics aggregation configured
     var metricsAgg1 = $scope.vis.aggs.bySchemaName['bubbles_height_size'][0];
     var metricsAgg2 = $scope.vis.aggs.bySchemaName['bubbles_height_size'][1];
-    console.log(metricsAgg1);
-    console.log(metricsAgg2);
     // Get the buckets of that aggregation
 
     var bucketsx = resp.aggregations[barsxAggId].buckets;
-    //var bucketsy = resp.aggregations[barsyAggId].buckets;
-
-    console.log(bucketsx);
-    console.log($scope.vis.aggs.bySchemaName);
-    console.log(resp.aggregations);
 
     $scope.bubbles = [];
-
 
     // Transform all buckets into tag objects
     bucketsx.map(function(bucketx) {
@@ -56,22 +46,22 @@ $scope.bubbles=[];
 
       bucketsy.map(function(buckety){
 
-      var value = metricsAgg1.getValue(buckety);
-      var value2 = metricsAgg2.getValue(buckety);
+        var value = metricsAgg1.getValue(buckety);
+        var value2 = metricsAgg2.getValue(buckety);
 
 
-      if($scope.vis.aggs.bySchemaName['bubbles'][0]._opts.type.includes("date")){
+        if($scope.vis.aggs.bySchemaName['bubbles'][0]._opts.type.includes("date")){
 
-        $scope.bubbles.push({key1:bucketx.key_as_string, key2:buckety.key, value: value, value2: value2});
-      } else {
+          $scope.bubbles.push({key1:bucketx.key_as_string, key2:buckety.key, value: value, value2: value2});
+        } else {
 
-        if($scope.vis.aggs.bySchemaName['bubbles'][1]._opts.type.includes("date")){
+          if($scope.vis.aggs.bySchemaName['bubbles'][1]._opts.type.includes("date")){
 
-          $scope.bubbles.push({key1:bucketx.key, key2:buckety.key_as_string, value: value, value2: value2});
+            $scope.bubbles.push({key1:bucketx.key, key2:buckety.key_as_string, value: value, value2: value2});
 
         } else {
 
-        $scope.bubbles.push({key1:bucketx.key, key2:buckety.key, value: value, value2: value2});
+          $scope.bubbles.push({key1:bucketx.key, key2:buckety.key, value: value, value2: value2});
         }
       }
      })
@@ -79,36 +69,26 @@ $scope.bubbles=[];
 
     $scope.bubbles = getOrderedData($scope.bubbles);
 
+    if ($scope.bubbleschart){
+      $scope.bubbleschart.data($scope.bubbles);
+      if ($scope.bubbles.length > 0){
+        $scope.bubbleschart.reBuild();
+      }
 
-  var data2= [{key1:'january',key2:'apple',value:23,value2:Math.random()*50},{key1:'february',key2:'apple',value:31,value2:Math.random()*50},{key1:'march',key2:'apple',value:10,value2:Math.random()*50},{key1:'april',key2:'apple',value:59,value2:Math.random()*50},
-
-            {key1:'january',key2:'google',value:34,value2:Math.random()*50},{key1:'february',key2:'google',value:89,value2:Math.random()*50},{key1:'march',key2:'google',value:53,value2:Math.random()*50},{key1:'april',key2:'google',value:76,value2:Math.random()*50},
-
-            {key1:'january',key2:'sony',value:34,value2:Math.random()*50},{key1:'february',key2:'sony',value:89,value2:Math.random()*50},{key1:'march',key2:'sony',value:53,value2:Math.random()*50},{key1:'april',key2:'sony',value:76,value2:Math.random()*50}
-
- 
-  ];
-
-      if ($scope.bubbleschart){
-        $scope.bubbleschart.data($scope.bubbles);
-        if ($scope.bubbles.length > 0){
-          $scope.bubbleschart.reBuild();
-        }
-
-      } else {
+    } else {
         $scope.bubbleschart = dash.bubbleChart([0,0,0]);
         $scope.bubbleschart.data($scope.bubbles)
-         .addCustomEvents(filter)
-         .width(500)
-         .height(400)
-         .gridsOn()
-         .depth(400);
+                           .addCustomEvents(filter)
+                           .width(500)
+                           .height(400)
+                           .gridsOn()
+                           .depth(400);
 
-    $scope.bubbleschart.render();
-  }
+        $scope.bubbleschart.render();
+    }
   }
 
-  });
+});
 
 
 
@@ -172,7 +152,6 @@ var getOrderedData = function (datos){
   var keysOne = getKeysOne(datos);
   var keysTwo = getKeysTwo(datos);
   var additionalStructure = getAdditionalMesh(keysOne, keysTwo, datos);
-  console.log(additionalStructure);
   for (var j = 0; j < keysOne.length; j++){
     for (var k = 0; k < keysTwo.length; k++){
         if (!additionalStructure[j][k]){
@@ -192,7 +171,6 @@ var getOrderedData = function (datos){
 
  var filter = function(mesh) {
     dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
-    console.log(mesh.data.key1);
 
     //if first buckets are date
     if($scope.vis.aggs.bySchemaName['bubbles'][0]._opts.type.includes("date")){
@@ -255,13 +233,6 @@ var getOrderedData = function (datos){
   });
   };
 
-  var testFunction = function (mesh) {
-      dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
-      //alert(mesh.data.key1);
-      console.log(mesh.data.key1);
-      });
- }
-
 function init () {
 
 
@@ -309,9 +280,6 @@ function init () {
    scene.add(light);
    var ambientLight = new THREE.AmbientLight(0x111111);
 
-
-  var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
-  var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
   dash = THREEDC({}, camera,scene,renderer, container);
 

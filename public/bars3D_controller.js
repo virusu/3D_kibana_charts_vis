@@ -8,13 +8,13 @@ const module = uiModules.get('kibana/vr_vis', ['kibana']);
 
 module.controller('BarsController', function($scope, $rootScope, $element, Private){
 
-var filterManager = Private(require('ui/filter_manager'));
+  var filterManager = Private(require('ui/filter_manager'));
 
-var dash, container, scene, camera, renderer, controls;
+  var dash, container, scene, camera, renderer, controls;
 
 
-$scope.barschart = null;
-$scope.bars=[];
+  $scope.barschart = null;
+  $scope.bars=[];
   $scope.$watch('esResponse', function(resp) {
 
     if (!resp) {
@@ -30,11 +30,8 @@ $scope.bars=[];
     // Retrieve the id of the configured tags aggregation
     var barsxAggId = $scope.vis.aggs.bySchemaName['bars'][0].id;
     var barsyAggId = $scope.vis.aggs.bySchemaName['bars'][1].id;
-    console.log(barsxAggId);
-    console.log(barsyAggId);
     // Retrieve the metrics aggregation configured
     var metricsAgg = $scope.vis.aggs.bySchemaName['bars_height'][0];
-    console.log(metricsAgg);
 
     // Get the buckets of that aggregation
     var bucketsx = resp.aggregations[barsxAggId].buckets;
@@ -48,53 +45,45 @@ $scope.bars=[];
 
       bucketsy.map(function(buckety){
 
-      var value = metricsAgg.getValue(buckety);
-
-
-      if($scope.vis.aggs.bySchemaName['bars'][0]._opts.type.includes("date")){
-
-        $scope.bars.push({key1:bucketx.key_as_string, key2:buckety.key, value: value});
-      } else {
-
-        if($scope.vis.aggs.bySchemaName['bars'][1]._opts.type.includes("date")){
-
-          $scope.bars.push({key1:bucketx.key, key2:buckety.key_as_string, value: value});
-
+        var value = metricsAgg.getValue(buckety);
+        if($scope.vis.aggs.bySchemaName['bars'][0]._opts.type.includes("date")){
+          $scope.bars.push({key1:bucketx.key_as_string, key2:buckety.key, value: value});
         } else {
-
-      $scope.bars.push({key1:bucketx.key, key2:buckety.key, value: value});
+          if($scope.vis.aggs.bySchemaName['bars'][1]._opts.type.includes("date")){
+            $scope.bars.push({key1:bucketx.key, key2:buckety.key_as_string, value: value});
+        } else {
+          $scope.bars.push({key1:bucketx.key, key2:buckety.key, value: value});
+          }
         }
-      }
      })
     });
 
 
     $scope.bars = getOrderedData($scope.bars);
 
-      if ($scope.barschart){
-        $scope.barschart.data($scope.bars);
-        if ($scope.bars.length > 0){
-          $scope.barschart.reBuild();
-        }
+    if ($scope.barschart){
+      $scope.barschart.data($scope.bars);
+      if ($scope.bars.length > 0){
+        $scope.barschart.reBuild();
+      }
 
-      } else {
-        $scope.barschart = dash.TDbarsChart();
-        $scope.barschart
-        .data($scope.bars)
-        .width(400)
-        .height(500)
-        .depth(400)
-        .barSeparation(0.8)
-        .addCustomEvents(filter)
-        .opacity(0.95)
-        .color(0xffaa00)
-        .gridsOn(0xffffff);
+    } else {
+      $scope.barschart = dash.TDbarsChart();
+      $scope.barschart
+      .data($scope.bars)
+      .width(400)
+      .height(500)
+      .depth(400)
+      .barSeparation(0.8)
+      .addCustomEvents(filter)
+      .opacity(0.95)
+      .color(0xffaa00)
+      .gridsOn(0xffffff);
 
-    $scope.barschart.render();
-  }
-  }
-
-  });
+      $scope.barschart.render();
+      }
+    }
+});
 
 
 
@@ -158,12 +147,10 @@ var getOrderedData = function (datos){
   var keysOne = getKeysOne(datos);
   var keysTwo = getKeysTwo(datos);
   var additionalStructure = getAdditionalMesh(keysOne, keysTwo, datos);
-  console.log(additionalStructure);
   for (var j = 0; j < keysOne.length; j++){
     for (var k = 0; k < keysTwo.length; k++){
         if (!additionalStructure[j][k]){
           additionalStructure[j][k] = {key1: keysOne[j], key2: keysTwo[k], value: 0};
-          //missingGaps.push({key1: keysOne[j], key2: keysTwo[k], value: 0})
         }
       }
     }
@@ -178,7 +165,6 @@ var getOrderedData = function (datos){
 
  var filter = function(mesh) {
     dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
-    console.log(mesh.data.key1);
 
     //if first buckets are date
     if($scope.vis.aggs.bySchemaName['bars'][0]._opts.type.includes("date")){
@@ -240,14 +226,6 @@ var getOrderedData = function (datos){
 
   });
   };
-
-  var testFunction = function (mesh) {
-      dash.domEvents.bind(mesh, 'mousedown', function(object3d){ 
-      //alert(mesh.data.key1);
-      console.log(mesh.data.key1);
-      });
- }
-
 
 function init () {
 

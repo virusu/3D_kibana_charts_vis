@@ -5,18 +5,16 @@ import moment from 'moment';
 // get the kibana/table_vis module, and make sure that it requires the "kibana" module if it
 // didn't already
 const module = uiModules.get('kibana/vr_vis', ['kibana']);
-/*  const ElementQueries = require('css-element-queries/src/ElementQueries');
-  const ResizeSensor = require('css-element-queries/src/ResizeSensor');*/
+
 
 module.controller('PieController', function($scope, $rootScope, $element, Private){
 
-console.log($scope);
-var filterManager = Private(require('ui/filter_manager'));
+  var filterManager = Private(require('ui/filter_manager'));
 
-var dash, containerpie, scenepie, camerapie, rendererpie;
+  var dash, containerpie, scenepie, camerapie, rendererpie;
 
-$scope.pie = null;
-$scope.slices=[];
+  $scope.pie = null;
+  $scope.slices=[];
 
   //esResponse holds the result of the elasticSearch query
   //resp is the actual value of esResponse
@@ -27,24 +25,18 @@ $scope.slices=[];
       return;
     }
 
-/*    if ($scope.pie){
-      $scope.pie.remove();
-      console.log("pie removed");
-    }*/
-
-    console.log(containerpie);
     //if slices aggregation exists, that is, user has configured it
     if ($scope.vis.aggs.bySchemaName['slices']) {
 
       // Retrieve the id of the configured tags aggregation
       var slicesAggId = $scope.vis.aggs.bySchemaName['slices'][0].id;
-      //console.log(slicesAggId);
+
       // Retrieve the metrics aggregation configured
       var metricsAgg = $scope.vis.aggs.bySchemaName['slice_size'][0];
-      //console.log(metricsAgg);
+
       // Get the buckets of that aggregation
       var buckets = resp.aggregations[slicesAggId].buckets;
-      console.log($scope.vis.aggs.bySchemaName['slices'][0].params.interval);
+
       // Transform all buckets into tag objects
       $scope.slices = buckets.map(function(bucket) {
         // Use the getValue function of the aggregation to get the value of a bucket
@@ -53,25 +45,22 @@ $scope.slices=[];
         //if field we are representing is a date field
         if($scope.vis.aggs.bySchemaName['slices'][0]._opts.type.includes("date")){
 
-        return {
-          key: bucket.key_as_string,
-          value: value
-          };
+          return {
+            key: bucket.key_as_string,
+            value: value
+            };
         }
         else{
-        return{
+          return{
             key:bucket.key,
             value: value
 
+          }
         }
-      }
       });
-      console.log($scope.slices);
 
       if ($scope.pie){
         $scope.pie.data($scope.slices);
-        console.log($scope);
-        console.log($scope.timefilter);
         $scope.pie.reBuild();
       } else {
 
@@ -83,14 +72,6 @@ $scope.slices=[];
         .radius(50)
         .color(0xffaa00);
 
-/*        console.log(containerpie.getBoundingClientRect());
-        new ResizeSensor(containerpie, function() {
-            console.log('Diiiv');
-            //network.setSize('150px', '150px');
-            rendererpie.setSize(containerpie.getBoundingClientRect().width, containerpie.getBoundingClientRect().height);
-        });*/
-
-
       $scope.pie.render();
     }
 }
@@ -99,6 +80,7 @@ $scope.slices=[];
 
 
 initpie();
+
 // animation loop / game loop
 animatepie();
 
@@ -185,9 +167,6 @@ function initpie () {
    scenepie.add(light);
    var ambientLight = new THREE.AmbientLight(0x111111);
 
-
-  var data1= [{key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
-  var data2 = [{key:'may',value:200},{key:'june',value:100},{key:'july',value:250}, {key:'december',value:20}, {key:'monday',value:20},{key:'tuesday',value:80},{key:'friday',value:30}];
 
   //create new dash object containing all variables needed for the scene
   dash = THREEDC({}, camerapie,scenepie,rendererpie, containerpie);

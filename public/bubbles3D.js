@@ -15,14 +15,7 @@ export default function bubbles3DVisProvider(Private) {
   		icon: 'fa-bomb',
   		description: 'A 3D bubbles chart. Great for representing 3D data',
   		template: BubblesTemplate,
-/*  		params: {
-  			defaults: {
-          		editorPanel: {},
-          		enableZoom: false,
 
-  			},
-            editor: vrVisParamsTemplate
-	    },   */  
     // Define the aggregation your visualization accepts
     schemas: new Schemas([
         {
