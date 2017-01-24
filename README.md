@@ -31,5 +31,5 @@ npm install
 ####Uninstall:
 ```
 cd KIBANA_HOME
-rm -rf plugins/network_vis/
+rm -rf plugins/3D_kibana_charts_vis
 ```
