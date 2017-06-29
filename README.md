@@ -5,19 +5,19 @@
 
 ![image](resources/my3viz-inmenu.png)
 
-##3D Pie Chart
+## 3D Pie Chart
 
 ![image](resources/onlypie3D.png)
 
-##3D Bars Chart
+## 3D Bars Chart
 
 ![image](resources/onlybars3D.png)
 
-##3D Bubbles Chart
+## 3D Bubbles Chart
 
 ![image](resources/onlybubbles3D.png)
 
-##Installation steps:
+## Installation steps:
 
 ```
 cd KIBANA_HOME/plugins
